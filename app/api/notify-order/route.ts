@@ -1,8 +1,6 @@
 import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 // In-memory rate limiter: max 5 requests per IP per minute
 const rateMap = new Map<string, { count: number; reset: number }>();
 function isRateLimited(ip: string): boolean {
@@ -138,6 +136,8 @@ export async function POST(req: NextRequest) {
   </div>
 </body>
 </html>`;
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   try {
     await resend.emails.send({
