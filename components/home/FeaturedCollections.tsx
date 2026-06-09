@@ -28,7 +28,7 @@ const collections = [
     title: "Customize",
     subtitle: "Make it uniquely yours",
     href: "/customize",
-    image: "https://images.unsplash.com/photo-1578681994506-b8f463449011?w=600&q=80",
+    image: "/products/perhaps-you-were-created-for-such-a-time-as-this-hoodie.svg",
     bg: "bg-cream",
   },
 ];

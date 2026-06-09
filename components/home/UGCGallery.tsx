@@ -96,7 +96,7 @@ export default function UGCGallery() {
                   src={post.image}
                   alt={post.caption}
                   fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="object-cover transition-transform duration-500 group-hover:scale-100"
                   unoptimized
                 />
                 {/* Hover overlay */}

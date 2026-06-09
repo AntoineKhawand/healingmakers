@@ -88,7 +88,7 @@ export default function ReviewsPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {photoReviews.map((r) => (
               <div key={r.id} className="relative aspect-square rounded-2xl overflow-hidden bg-sand group cursor-pointer">
-                <img src={r.photo!} alt={r.product} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <img src={r.photo!} alt={r.product} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-100" />
                 <div className="absolute inset-0 bg-gradient-to-t from-soft-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="absolute bottom-4 left-4 right-4">
                     <p className="text-white text-xs font-semibold">{r.name}</p>

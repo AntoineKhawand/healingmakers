@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Check, ArrowRight, Pencil } from "lucide-react";
+import { Check, ArrowRight, Pencil, ZoomIn, X } from "lucide-react";
 import { products } from "@/lib/data/products";
 import { useCartStore } from "@/lib/store/cartStore";
 import { useToast } from "@/components/providers/ToastProvider";
@@ -31,6 +31,8 @@ export default function CustomizePageClient() {
   const [font, setFont] = useState("serif");
   const [giftMessage, setGiftMessage] = useState("");
 
+  const [zoomed, setZoomed] = useState(false);
+
   const { addItem } = useCartStore();
   const { toast } = useToast();
   const router = useRouter();
@@ -50,7 +52,7 @@ export default function CustomizePageClient() {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-6xl mx-auto py-10">
       {/* Header */}
       <div className="text-center mb-10">
         <div className="inline-flex items-center gap-2 bg-dusty-rose/10 text-dusty-rose text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
@@ -88,14 +90,24 @@ export default function CustomizePageClient() {
 
       <div className="grid lg:grid-cols-2 gap-10 items-start">
         {/* Preview */}
-        <div className="relative aspect-[4/5] bg-light-sand rounded-3xl overflow-hidden sticky top-24">
+        <div
+          className="relative aspect-[4/5] bg-light-sand rounded-3xl overflow-hidden sticky top-24 cursor-zoom-in group"
+          onClick={() => setZoomed(true)}
+        >
           <Image
             src={selectedProduct.images[0]}
             alt={selectedProduct.name}
             fill
-            className="object-cover"
+            className="object-contain transition-transform duration-500 group-hover:scale-110"
             sizes="(max-width: 1024px) 100vw, 50vw"
+            unoptimized
           />
+
+          {/* Zoom hint */}
+          <div className="absolute top-3 right-3 bg-white/80 backdrop-blur-sm rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-sm">
+            <ZoomIn size={16} className="text-soft-black" />
+          </div>
+
           {customText && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className={`bg-white/90 backdrop-blur-sm rounded-xl px-5 py-3 shadow-lg ${
@@ -123,6 +135,30 @@ export default function CustomizePageClient() {
           )}
         </div>
 
+        {/* Lightbox */}
+        {zoomed && (
+          <div
+            className="fixed inset-0 z-[200] bg-soft-black/90 backdrop-blur-sm flex items-center justify-center p-6"
+            onClick={() => setZoomed(false)}
+          >
+            <button
+              className="absolute top-5 right-5 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+              onClick={() => setZoomed(false)}
+            >
+              <X size={20} className="text-white" />
+            </button>
+            <div className="relative w-full max-w-lg aspect-square" onClick={(e) => e.stopPropagation()}>
+              <Image
+                src={selectedProduct.images[0]}
+                alt={selectedProduct.name}
+                fill
+                className="object-contain"
+                unoptimized
+              />
+            </div>
+          </div>
+        )}
+
         {/* Form */}
         <div>
           {/* Step 0 — Choose Product */}
@@ -133,12 +169,12 @@ export default function CustomizePageClient() {
                 {customizableProducts.map((p) => (
                   <label
                     key={p.id}
-                    className={`flex gap-4 p-4 rounded-2xl border cursor-pointer transition-colors ${
+                    className={`group flex gap-4 p-4 rounded-2xl border cursor-pointer transition-colors ${
                       selectedProduct.id === p.id ? "border-dusty-rose bg-dusty-rose/5" : "border-sand hover:border-dusty-rose/50"
                     }`}
                   >
                     <div className="relative w-16 h-16 bg-sand rounded-xl overflow-hidden shrink-0">
-                      <Image src={p.images[0]} alt={p.name} fill className="object-cover" />
+                      <Image src={p.images[0]} alt={p.name} fill className="object-contain scale-[1.35] transition-transform duration-300 group-hover:scale-[1.5]" unoptimized />
                     </div>
                     <div className="flex-1">
                       <p className="font-medium text-soft-black text-sm">{p.name}</p>
