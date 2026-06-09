@@ -12,8 +12,6 @@ import {
 } from "lucide-react";
 import { useReviewStore, SubmittedReview } from "@/lib/store/reviewStore";
 
-const ADMIN_PASSWORD = "healing2026";
-
 const STATUS_META: Record<OrderStatus, { label: string; bg: string; text: string; dot: string }> = {
   pending:    { label: "Pending",    bg: "bg-amber-50",  text: "text-amber-700",  dot: "bg-amber-400" },
   processing: { label: "Processing", bg: "bg-blue-50",   text: "text-blue-700",   dot: "bg-blue-400" },
@@ -529,9 +527,17 @@ function LoginGate({ onAuth }: { onAuth: () => void }) {
 
   const login = async () => {
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 400));
-    if (password === ADMIN_PASSWORD) { onAuth(); }
-    else { setError(true); setLoading(false); }
+    try {
+      const res = await fetch("/api/admin/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const { ok } = await res.json();
+      if (ok) { onAuth(); return; }
+    } catch {}
+    setError(true);
+    setLoading(false);
   };
 
   return (

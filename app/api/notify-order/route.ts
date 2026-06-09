@@ -3,19 +3,68 @@ import { NextRequest, NextResponse } from "next/server";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// In-memory rate limiter: max 5 requests per IP per minute
+const rateMap = new Map<string, { count: number; reset: number }>();
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateMap.get(ip);
+  if (!entry || now > entry.reset) {
+    rateMap.set(ip, { count: 1, reset: now + 60_000 });
+    return false;
+  }
+  if (entry.count >= 5) return true;
+  entry.count++;
+  return false;
+}
+
+function esc(str: unknown): string {
+  if (typeof str !== "string") return "";
+  return str
+    .slice(0, 500)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { orderId, form, items, paymentMethod, shippingCost, discount, total } = body;
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  if (isRateLimited(ip)) {
+    return NextResponse.json({ ok: false }, { status: 429 });
+  }
+
+  let body: Record<string, unknown>;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ ok: false }, { status: 400 });
+  }
+
+  const { orderId, form, items, paymentMethod, shippingCost, discount, total } = body as {
+    orderId: unknown; form: Record<string, unknown>; items: unknown[];
+    paymentMethod: unknown; shippingCost: unknown; discount: unknown; total: unknown;
+  };
+
+  if (!orderId || !form || !Array.isArray(items) || items.length === 0) {
+    return NextResponse.json({ ok: false }, { status: 400 });
+  }
+
+  const safeTotal = typeof total === "number" ? total : 0;
+  const safeDiscount = typeof discount === "number" ? discount : 0;
+  const safeShipping = typeof shippingCost === "number" ? shippingCost : 0;
 
   const itemRows = items
     .map(
-      (it: { name: string; size: string; color: string; quantity: number; price: number }) =>
-        `<tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #f0ebe4;">${it.name}</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #f0ebe4;color:#888;">${it.size} / ${it.color}</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #f0ebe4;text-align:center;">${it.quantity}</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #f0ebe4;text-align:right;font-weight:600;">$${it.price.toFixed(2)}</td>
-        </tr>`
+      (it: unknown) => {
+        const i = it as { name: unknown; size: unknown; color: unknown; quantity: unknown; price: unknown };
+        const price = typeof i.price === "number" ? i.price : 0;
+        return `<tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #f0ebe4;">${esc(i.name)}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #f0ebe4;color:#888;">${esc(i.size)} / ${esc(i.color)}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #f0ebe4;text-align:center;">${esc(String(i.quantity))}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #f0ebe4;text-align:right;font-weight:600;">$${price.toFixed(2)}</td>
+        </tr>`;
+      }
     )
     .join("");
 
@@ -35,7 +84,7 @@ export async function POST(req: NextRequest) {
     <!-- Order ID Banner -->
     <div style="background:#fdf3f0;border-left:4px solid #c9a97a;padding:14px 32px;">
       <p style="margin:0;font-size:13px;color:#888;">Order ID</p>
-      <p style="margin:4px 0 0;font-size:18px;font-weight:700;color:#1a1a1a;letter-spacing:1px;">${orderId}</p>
+      <p style="margin:4px 0 0;font-size:18px;font-weight:700;color:#1a1a1a;letter-spacing:1px;">${esc(orderId)}</p>
     </div>
 
     <div style="padding:28px 32px;">
@@ -43,10 +92,10 @@ export async function POST(req: NextRequest) {
       <!-- Customer Info -->
       <h2 style="margin:0 0 14px;font-size:14px;font-weight:700;color:#1a1a1a;text-transform:uppercase;letter-spacing:1px;">Customer</h2>
       <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
-        <tr><td style="padding:6px 0;color:#888;font-size:13px;width:120px;">Name</td><td style="padding:6px 0;font-size:13px;font-weight:600;color:#1a1a1a;">${form.fullName}</td></tr>
-        ${form.phone ? `<tr><td style="padding:6px 0;color:#888;font-size:13px;">Phone</td><td style="padding:6px 0;font-size:13px;color:#1a1a1a;">${form.phone}</td></tr>` : ""}
-        ${form.email ? `<tr><td style="padding:6px 0;color:#888;font-size:13px;">Email</td><td style="padding:6px 0;font-size:13px;color:#1a1a1a;">${form.email}</td></tr>` : ""}
-        <tr><td style="padding:6px 0;color:#888;font-size:13px;">Address</td><td style="padding:6px 0;font-size:13px;color:#1a1a1a;">${form.address}, ${form.city}${form.zip ? ` ${form.zip}` : ""}, ${form.country}</td></tr>
+        <tr><td style="padding:6px 0;color:#888;font-size:13px;width:120px;">Name</td><td style="padding:6px 0;font-size:13px;font-weight:600;color:#1a1a1a;">${esc(form.fullName)}</td></tr>
+        ${form.phone ? `<tr><td style="padding:6px 0;color:#888;font-size:13px;">Phone</td><td style="padding:6px 0;font-size:13px;color:#1a1a1a;">${esc(form.phone)}</td></tr>` : ""}
+        ${form.email ? `<tr><td style="padding:6px 0;color:#888;font-size:13px;">Email</td><td style="padding:6px 0;font-size:13px;color:#1a1a1a;">${esc(form.email)}</td></tr>` : ""}
+        <tr><td style="padding:6px 0;color:#888;font-size:13px;">Address</td><td style="padding:6px 0;font-size:13px;color:#1a1a1a;">${esc(form.address)}, ${esc(form.city)}${form.zip ? ` ${esc(form.zip)}` : ""}, ${esc(form.country)}</td></tr>
       </table>
 
       <!-- Items -->
@@ -65,9 +114,9 @@ export async function POST(req: NextRequest) {
 
       <!-- Totals -->
       <div style="background:#faf8f5;border-radius:12px;padding:18px 20px;margin-bottom:28px;">
-        ${discount > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:8px;"><span>Discount</span><span style="color:#22c55e;">−$${discount.toFixed(2)}</span></div>` : ""}
-        <div style="display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:8px;"><span>Shipping</span><span>$${shippingCost.toFixed(2)}</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:#1a1a1a;border-top:1px solid #e8e0d8;padding-top:12px;margin-top:4px;"><span>Total</span><span>$${total.toFixed(2)}</span></div>
+        ${safeDiscount > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:8px;"><span>Discount</span><span style="color:#22c55e;">−$${safeDiscount.toFixed(2)}</span></div>` : ""}
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:8px;"><span>Shipping</span><span>$${safeShipping.toFixed(2)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:#1a1a1a;border-top:1px solid #e8e0d8;padding-top:12px;margin-top:4px;"><span>Total</span><span>$${safeTotal.toFixed(2)}</span></div>
       </div>
 
       <!-- Payment -->
@@ -75,7 +124,7 @@ export async function POST(req: NextRequest) {
         <span style="font-size:20px;">💳</span>
         <div>
           <p style="margin:0;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">Payment Method</p>
-          <p style="margin:4px 0 0;font-size:14px;font-weight:600;color:#1a1a1a;">${paymentMethod}</p>
+          <p style="margin:4px 0 0;font-size:14px;font-weight:600;color:#1a1a1a;">${esc(paymentMethod)}</p>
         </div>
       </div>
 
@@ -94,7 +143,7 @@ export async function POST(req: NextRequest) {
     await resend.emails.send({
       from: "HealingMakers Orders <onboarding@resend.dev>",
       to: process.env.ADMIN_EMAIL!,
-      subject: `🛍️ New Order ${orderId} — $${total.toFixed(2)} (${form.fullName})`,
+      subject: `New Order ${String(orderId).slice(0, 50)} — $${safeTotal.toFixed(2)} (${String(form.fullName).slice(0, 80)})`,
       html,
     });
     return NextResponse.json({ ok: true });
