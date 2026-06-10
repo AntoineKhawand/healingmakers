@@ -118,7 +118,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
               <>
                 <span className="text-xl text-charcoal/40 line-through">${product.compareAtPrice}</span>
                 <span className="text-xs font-bold bg-dusty-rose/10 text-dusty-rose px-2.5 py-1 rounded-full">
-                  -{Math.round((1 - product.price / product.compareAtPrice) * 100)}% OFF
+                  -${product.compareAtPrice - product.price} OFF
                 </span>
               </>
             )}
