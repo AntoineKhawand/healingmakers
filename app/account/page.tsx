@@ -27,7 +27,7 @@ const tierNext: Record<string, number> = {
 };
 
 export default function AccountPage() {
-  const { points, tier, totalEarned, maxRedeemable } = useLoyaltyStore();
+  const { points, tier, totalEarned, maxRedeemable, activeRedemption, redeemPoints } = useLoyaltyStore();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -115,6 +115,7 @@ export default function AccountPage() {
       {mounted && redeemable > 0 ? (
         <Link
           href="/cart"
+          onClick={() => activeRedemption === 0 && redeemPoints(redeemable)}
           className="flex items-center justify-between gap-4 bg-emerald-50 border border-emerald-200 rounded-2xl px-5 py-4 mb-6 hover:bg-emerald-100 transition-colors group"
         >
           <div className="flex items-center gap-3">
@@ -122,9 +123,9 @@ export default function AccountPage() {
               <Star size={18} className="text-emerald-600" />
             </div>
             <div>
-              <p className="font-semibold text-soft-black text-sm">You can redeem ${redeemable} off now!</p>
+              <p className="font-semibold text-soft-black text-sm">Tap to redeem ${redeemable} off now!</p>
               <p className="text-xs text-charcoal/60 mt-0.5">
-                {Math.floor(points / REDEEM_RATE) * REDEEM_RATE} pts → apply in your cart at checkout
+                {Math.floor(points / REDEEM_RATE) * REDEEM_RATE} pts → applied instantly, view it in your cart
               </p>
             </div>
           </div>
