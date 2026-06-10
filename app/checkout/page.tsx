@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Check, Smartphone, Truck, MessageCircle, ChevronRight, Lock } from "lucide-react";
+import { Check, Smartphone, Truck, MessageCircle, ChevronRight, Lock, Tag, Gift, X, Sparkles } from "lucide-react";
 import { useCartStore } from "@/lib/store/cartStore";
 import { useOrderStore } from "@/lib/store/orderStore";
-import { useDiscountStore } from "@/lib/store/discountStore";
+import { useDiscountStore, PROMO_CODE } from "@/lib/store/discountStore";
 import { useLoyaltyStore } from "@/lib/store/loyaltyStore";
 import { useGiftCardStore } from "@/lib/store/giftCardStore";
 
@@ -35,17 +35,33 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { items, total, clearCart } = useCartStore();
   const { addOrder } = useOrderStore();
-  const { appliedCode, discountAmount, removeCode } = useDiscountStore();
+  const { appliedCode, discountAmount, applyCode, removeCode, subscribed } = useDiscountStore();
   const { addPoints, activeRedemption, clearRedemption } = useLoyaltyStore();
-  const { applied: gc, giftCardDiscount, removeGiftCard } = useGiftCardStore();
+  const { applied: gc, giftCardDiscount, applyGiftCard, removeGiftCard } = useGiftCardStore();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({ fullName: "", email: "", phone: "", address: "", city: "", country: "", zip: "" });
   const [shippingMethod, setShippingMethod] = useState("standard");
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [promoInput, setPromoInput] = useState("");
+  const [promoError, setPromoError] = useState(false);
+  const [gcInput, setGcInput] = useState("");
+  const [gcError, setGcError] = useState(false);
 
   const update = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
+
+  const handleApply = () => {
+    const ok = applyCode(promoInput.trim());
+    if (!ok) { setPromoError(true); setTimeout(() => setPromoError(false), 2500); }
+    else setPromoInput("");
+  };
+
+  const handleApplyGc = () => {
+    const ok = applyGiftCard(gcInput.trim());
+    if (!ok) { setGcError(true); setTimeout(() => setGcError(false), 2500); }
+    else setGcInput("");
+  };
 
   const availableShipping = shippingMethods.filter(
     (m) => m.countries.includes(form.country) || m.countries.includes("OTHER")
@@ -304,7 +320,116 @@ export default function CheckoutPage() {
         </div>
 
         {/* Order Summary */}
-        <div>
+        <div className="space-y-4">
+          {/* Discount banner — shown if subscribed but code not yet applied */}
+          {subscribed && !appliedCode && (
+            <div className="bg-dusty-rose/10 border border-dusty-rose/30 rounded-2xl p-4 flex items-start gap-3">
+              <Sparkles size={16} className="text-dusty-rose shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-soft-black">Your 10% discount is waiting!</p>
+                <p className="text-xs text-charcoal/60 mt-0.5 mb-2">Enter your code below to activate it.</p>
+                <button
+                  onClick={() => { setPromoInput(PROMO_CODE); applyCode(PROMO_CODE); }}
+                  className="text-xs font-bold text-dusty-rose hover:underline"
+                >
+                  Apply {PROMO_CODE} automatically →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Promo code */}
+          <div className="bg-white border border-sand rounded-2xl p-5">
+            <p className="text-sm font-semibold text-soft-black mb-3 flex items-center gap-2">
+              <Tag size={15} className="text-dusty-rose" /> Promo Code
+            </p>
+            {appliedCode ? (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-emerald-600 text-sm font-semibold">
+                  <Check size={14} /> <span className="font-mono">{appliedCode}</span> — 10% off applied!
+                </div>
+                <button onClick={removeCode} className="text-charcoal/40 hover:text-red-500 transition-colors">
+                  <X size={14} />
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={promoInput}
+                    onChange={(e) => { setPromoInput(e.target.value.toUpperCase()); setPromoError(false); }}
+                    onKeyDown={(e) => e.key === "Enter" && handleApply()}
+                    placeholder="Enter code"
+                    className={`flex-1 border px-3 py-2.5 rounded-xl text-sm font-mono tracking-wider focus:outline-none transition-colors ${
+                      promoError ? "border-red-300 bg-red-50 text-red-600" : "border-sand focus:border-dusty-rose"
+                    }`}
+                  />
+                  <button
+                    onClick={handleApply}
+                    disabled={!promoInput}
+                    className="bg-soft-black text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-charcoal transition-colors disabled:opacity-40"
+                  >
+                    Apply
+                  </button>
+                </div>
+                {promoError && <p className="text-xs text-red-500 mt-1.5">Invalid code. Try WELCOME10.</p>}
+                {!subscribed && (
+                  <p className="text-xs text-charcoal/40 mt-2">
+                    Subscribe to our newsletter on the homepage to get your code.
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Gift Card */}
+          <div className="bg-white border border-sand rounded-2xl p-5">
+            <p className="text-sm font-semibold text-soft-black mb-3 flex items-center gap-2">
+              <Gift size={15} className="text-dusty-rose" /> Gift Card
+            </p>
+            {gc ? (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-emerald-600 text-sm font-semibold">
+                  <Check size={14} />
+                  <span className="font-mono">{gc.code}</span>
+                  <span className="font-normal text-emerald-700">— ${gc.amount} off applied!</span>
+                </div>
+                <button onClick={removeGiftCard} className="text-charcoal/40 hover:text-red-500 transition-colors">
+                  <X size={14} />
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={gcInput}
+                    onChange={(e) => { setGcInput(e.target.value.toUpperCase()); setGcError(false); }}
+                    onKeyDown={(e) => e.key === "Enter" && handleApplyGc()}
+                    placeholder="HM-GC-XXXX"
+                    className={`flex-1 border px-3 py-2.5 rounded-xl text-sm font-mono tracking-wider focus:outline-none transition-colors ${
+                      gcError ? "border-red-300 bg-red-50 text-red-600" : "border-sand focus:border-dusty-rose"
+                    }`}
+                  />
+                  <button
+                    onClick={handleApplyGc}
+                    disabled={!gcInput}
+                    className="bg-soft-black text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-charcoal transition-colors disabled:opacity-40"
+                  >
+                    Apply
+                  </button>
+                </div>
+                {gcError && (
+                  <p className="text-xs text-red-500 mt-1.5">Invalid gift card code. Format: HM-GC-50</p>
+                )}
+                <p className="text-xs text-charcoal/40 mt-2">
+                  Gift card codes are sent via WhatsApp after purchase.
+                </p>
+              </>
+            )}
+          </div>
+
           <div className="bg-cream rounded-2xl p-5 sticky top-24">
             <p className="font-semibold text-soft-black mb-4">Order Summary</p>
             <div className="space-y-3 mb-4">
