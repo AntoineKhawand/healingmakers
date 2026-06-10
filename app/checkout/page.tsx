@@ -22,8 +22,41 @@ const countries = [
 ];
 
 const shippingMethods = [
-  { id: "standard", label: "Standard Delivery", sub: "Delivered straight to your door", price: 5, countries: ["LB", "US", "QA", "CY", "AE", "OTHER"] },
+  { id: "standard", label: "Standard Delivery", sub: "Delivered straight to your door" },
 ];
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const NAME_REGEX = /^[A-Za-zÀ-ɏ؀-ۿ][A-Za-zÀ-ɏ؀-ۿ'.\- ]*$/;
+
+// Default WhatsApp/phone country code based on the selected shipping country
+const COUNTRY_DIAL_CODES: Record<string, string> = {
+  LB: "+961", US: "+1", QA: "+974", CY: "+357", AE: "+971",
+};
+
+const DIAL_CODES = [
+  { code: "+961", flag: "🇱🇧" },
+  { code: "+1", flag: "🇺🇸" },
+  { code: "+971", flag: "🇦🇪" },
+  { code: "+966", flag: "🇸🇦" },
+  { code: "+974", flag: "🇶🇦" },
+  { code: "+965", flag: "🇰🇼" },
+  { code: "+962", flag: "🇯🇴" },
+  { code: "+20", flag: "🇪🇬" },
+  { code: "+357", flag: "🇨🇾" },
+  { code: "+44", flag: "🇬🇧" },
+  { code: "+33", flag: "🇫🇷" },
+  { code: "+49", flag: "🇩🇪" },
+  { code: "+61", flag: "🇦🇺" },
+];
+
+// City dropdown options per country — falls back to free text when not listed
+const CITIES_BY_COUNTRY: Record<string, string[]> = {
+  LB: ["Beirut", "Tripoli", "Sidon (Saida)", "Tyre (Sour)", "Jounieh", "Zahle", "Baalbek", "Byblos (Jbeil)", "Nabatieh", "Batroun", "Aley", "Zahrani"],
+  US: ["New York", "Los Angeles", "Chicago", "Houston", "Miami", "Dearborn", "Boston", "San Francisco", "Detroit", "Washington, D.C."],
+  QA: ["Doha", "Al Rayyan", "Al Wakrah", "Al Khor", "Umm Salal", "Lusail"],
+  CY: ["Nicosia", "Limassol", "Larnaca", "Paphos", "Famagusta", "Kyrenia"],
+  AE: ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Ras Al Khaimah", "Fujairah", "Al Ain", "Umm Al Quwain"],
+};
 
 const paymentMethods = [
   { id: "card", label: "Whish Money", icon: Smartphone, sub: "Send to +961 76 072 936" },
@@ -40,6 +73,8 @@ export default function CheckoutPage() {
   const { applied: gc, giftCardDiscount, applyGiftCard, removeGiftCard } = useGiftCardStore();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({ fullName: "", email: "", phone: "", address: "", city: "", country: "", zip: "" });
+  const [phoneCode, setPhoneCode] = useState("+961");
+  const [cityMode, setCityMode] = useState<"select" | "custom">("select");
   const [shippingMethod, setShippingMethod] = useState("standard");
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [agreed, setAgreed] = useState(false);
@@ -50,6 +85,17 @@ export default function CheckoutPage() {
   const [gcError, setGcError] = useState(false);
 
   const update = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
+
+  const handleCountryChange = (value: string) => {
+    setForm((f) => ({ ...f, country: value, city: "" }));
+    setCityMode("select");
+    if (COUNTRY_DIAL_CODES[value]) setPhoneCode(COUNTRY_DIAL_CODES[value]);
+  };
+
+  const fieldClass = (hasError: boolean) =>
+    `w-full border px-4 py-3 rounded-xl text-sm focus:outline-none transition-colors ${
+      hasError ? "border-red-300 focus:border-red-400" : "border-sand focus:border-dusty-rose"
+    }`;
 
   const handleApply = () => {
     const ok = applyCode(promoInput.trim());
@@ -63,11 +109,22 @@ export default function CheckoutPage() {
     else setGcInput("");
   };
 
-  const availableShipping = shippingMethods.filter(
-    (m) => m.countries.includes(form.country) || m.countries.includes("OTHER")
-  );
-  const selectedShipping = shippingMethods.find((m) => m.id === shippingMethod);
-  const shippingCost  = selectedShipping?.price ?? 0;
+  const isLebanon     = form.country === "LB";
+  const shippingCost  = isLebanon ? 5 : 0;
+  const cityOptions   = CITIES_BY_COUNTRY[form.country] ?? [];
+
+  const isNameValid   = form.fullName.trim().length >= 2 && NAME_REGEX.test(form.fullName.trim());
+  const nameError     = form.fullName.length > 0 && !isNameValid;
+
+  const isEmailValid  = EMAIL_REGEX.test(form.email.trim());
+  const emailError    = form.email.length > 0 && !isEmailValid;
+
+  const phoneDigits   = form.phone.replace(/\D/g, "");
+  const isPhoneValid  = phoneDigits.length === 0 || (phoneDigits.length >= 7 && phoneDigits.length <= 12);
+  const phoneError    = form.phone.length > 0 && !isPhoneValid;
+
+  const isCityValid   = form.city.trim().length >= 2;
+
   const promoOff      = discountAmount(total());
   const gcOff         = giftCardDiscount(total() - promoOff);
   const ptsOff        = Math.min(activeRedemption, total() - promoOff - gcOff);
@@ -79,6 +136,7 @@ export default function CheckoutPage() {
     setLoading(true);
     // Snapshot cart data before any async operation
     const itemsSnapshot = [...items];
+    const formSnapshot = { ...form, phone: form.phone.trim() ? `${phoneCode} ${form.phone.trim()}` : "" };
     const subtotalSnapshot   = total();
     const promoSnapshot      = discountAmount(subtotalSnapshot);
     const gcSnapshot         = giftCardDiscount(subtotalSnapshot - promoSnapshot);
@@ -92,7 +150,7 @@ export default function CheckoutPage() {
       id: orderId,
       items: itemsSnapshot,
       status: "pending",
-      form,
+      form: formSnapshot,
       paymentMethod,
       subtotal: subtotalSnapshot - discountSnapshot,
       shippingCost,
@@ -115,7 +173,7 @@ export default function CheckoutPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         orderId,
-        form,
+        form: formSnapshot,
         items: itemsSnapshot.map((it) => ({
           name: it.product.name,
           size: it.size,
@@ -171,39 +229,122 @@ export default function CheckoutPage() {
             <div className="bg-white border border-sand rounded-2xl p-6">
               <h2 className="font-playfair text-xl font-bold text-soft-black mb-6">Contact & Shipping</h2>
               <div className="grid sm:grid-cols-2 gap-4">
-                {[
-                  { key: "fullName", label: "Full Name", type: "text", full: true },
-                  { key: "email", label: "Email Address", type: "email" },
-                  { key: "phone", label: "Phone / WhatsApp", type: "tel" },
-                  { key: "address", label: "Address", type: "text", full: true },
-                  { key: "city", label: "City", type: "text" },
-                  { key: "zip", label: "ZIP / Postal Code", type: "text" },
-                ].map(({ key, label, type, full }) => (
-                  <div key={key} className={full ? "sm:col-span-2" : ""}>
-                    <label className="block text-xs font-semibold text-charcoal/70 mb-1.5 uppercase tracking-wide">{label}</label>
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-semibold text-charcoal/70 mb-1.5 uppercase tracking-wide">Full Name</label>
+                  <input
+                    type="text"
+                    value={form.fullName}
+                    onChange={(e) => update("fullName", e.target.value)}
+                    className={fieldClass(nameError)}
+                  />
+                  {nameError && <p className="text-xs text-red-500 mt-1.5">Please enter your full name (at least 2 characters).</p>}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-charcoal/70 mb-1.5 uppercase tracking-wide">Email Address</label>
+                  <input
+                    type="email"
+                    value={form.email}
+                    onChange={(e) => update("email", e.target.value)}
+                    className={fieldClass(emailError)}
+                  />
+                  {emailError && <p className="text-xs text-red-500 mt-1.5">Please enter a valid email address.</p>}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-charcoal/70 mb-1.5 uppercase tracking-wide">Phone / WhatsApp</label>
+                  <div className="flex gap-2">
+                    <select
+                      value={phoneCode}
+                      onChange={(e) => setPhoneCode(e.target.value)}
+                      className="border border-sand px-2 py-3 rounded-xl text-sm bg-white focus:outline-none focus:border-dusty-rose w-[92px] shrink-0"
+                    >
+                      {DIAL_CODES.map((d) => <option key={d.code} value={d.code}>{d.flag} {d.code}</option>)}
+                    </select>
                     <input
-                      type={type}
-                      value={(form as Record<string, string>)[key]}
-                      onChange={(e) => update(key, e.target.value)}
-                      className="w-full border border-sand px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-dusty-rose transition-colors"
+                      type="tel"
+                      value={form.phone}
+                      onChange={(e) => update("phone", e.target.value)}
+                      placeholder="71 234 567"
+                      className={`flex-1 min-w-0 ${fieldClass(phoneError)}`}
                     />
                   </div>
-                ))}
-                <div className="sm:col-span-2">
+                  {phoneError && <p className="text-xs text-red-500 mt-1.5">Please enter a valid phone number.</p>}
+                </div>
+
+                <div>
                   <label className="block text-xs font-semibold text-charcoal/70 mb-1.5 uppercase tracking-wide">Country</label>
                   <select
                     value={form.country}
-                    onChange={(e) => update("country", e.target.value)}
+                    onChange={(e) => handleCountryChange(e.target.value)}
                     className="w-full border border-sand px-4 py-3 rounded-xl text-sm bg-white focus:outline-none focus:border-dusty-rose"
                   >
                     <option value="" disabled>Select country…</option>
                     {countries.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
                   </select>
                 </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-charcoal/70 mb-1.5 uppercase tracking-wide">City</label>
+                  {cityOptions.length > 0 && cityMode === "select" ? (
+                    <select
+                      value={form.city}
+                      onChange={(e) => {
+                        if (e.target.value === "__other__") { setCityMode("custom"); update("city", ""); }
+                        else update("city", e.target.value);
+                      }}
+                      className="w-full border border-sand px-4 py-3 rounded-xl text-sm bg-white focus:outline-none focus:border-dusty-rose"
+                    >
+                      <option value="" disabled>Select city…</option>
+                      {cityOptions.map((c) => <option key={c} value={c}>{c}</option>)}
+                      <option value="__other__">Other…</option>
+                    </select>
+                  ) : (
+                    <>
+                      <input
+                        type="text"
+                        value={form.city}
+                        onChange={(e) => update("city", e.target.value)}
+                        placeholder={form.country ? "Enter your city" : "Select a country first"}
+                        disabled={!form.country}
+                        className={`${fieldClass(false)} disabled:opacity-50 disabled:cursor-not-allowed`}
+                      />
+                      {cityOptions.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => { setCityMode("select"); update("city", ""); }}
+                          className="text-xs text-dusty-rose hover:underline mt-1.5"
+                        >
+                          ← Choose from list
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-semibold text-charcoal/70 mb-1.5 uppercase tracking-wide">Address</label>
+                  <input
+                    type="text"
+                    value={form.address}
+                    onChange={(e) => update("address", e.target.value)}
+                    className={fieldClass(false)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-charcoal/70 mb-1.5 uppercase tracking-wide">ZIP / Postal Code</label>
+                  <input
+                    type="text"
+                    value={form.zip}
+                    onChange={(e) => update("zip", e.target.value)}
+                    className={fieldClass(false)}
+                  />
+                </div>
               </div>
               <button
                 onClick={() => setStep(1)}
-                disabled={!form.fullName || !form.email || !form.address || !form.city}
+                disabled={!isNameValid || !isEmailValid || !isPhoneValid || !form.address.trim() || !isCityValid || !form.country}
                 className="mt-6 w-full bg-soft-black text-white py-3.5 rounded-xl font-medium text-sm hover:bg-charcoal transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Continue to Shipping
@@ -216,7 +357,7 @@ export default function CheckoutPage() {
             <div className="bg-white border border-sand rounded-2xl p-6">
               <h2 className="font-playfair text-xl font-bold text-soft-black mb-6">Shipping Method</h2>
               <div className="space-y-3">
-                {availableShipping.map((m) => (
+                {shippingMethods.map((m) => (
                   <label key={m.id} className={`flex items-center justify-between gap-4 p-4 rounded-xl border cursor-pointer transition-colors ${
                     shippingMethod === m.id ? "border-dusty-rose bg-dusty-rose/5" : "border-sand hover:border-dusty-rose/50"
                   }`}>
@@ -231,11 +372,16 @@ export default function CheckoutPage() {
                         <p className="text-xs text-charcoal/60">{m.sub}</p>
                       </div>
                     </div>
-                    <span className="font-semibold text-soft-black text-sm">{m.price === 0 ? "Free" : `$${m.price}`}</span>
+                    <span className="font-semibold text-soft-black text-sm">{isLebanon ? "$5" : "TBD"}</span>
                     <input type="radio" name="shipping" value={m.id} checked={shippingMethod === m.id} onChange={() => setShippingMethod(m.id)} className="sr-only" />
                   </label>
                 ))}
               </div>
+              {!isLebanon && (
+                <p className="text-xs text-charcoal/60 mt-3 leading-relaxed">
+                  International shipping costs vary by destination — we&apos;ll confirm your exact delivery fee over WhatsApp before your order ships.
+                </p>
+              )}
               <div className="flex gap-3 mt-6">
                 <button onClick={() => setStep(0)} className="flex-1 border border-sand text-charcoal py-3.5 rounded-xl text-sm font-medium hover:border-dusty-rose transition-colors">
                   Back
@@ -469,9 +615,12 @@ export default function CheckoutPage() {
                   <span>⭐ Points reward</span><span>−${ptsOff.toFixed(2)}</span>
                 </div>
               )}
-              <div className="flex justify-between text-charcoal/70"><span>Shipping</span><span>{shippingCost === 0 ? "TBD" : `$${shippingCost}`}</span></div>
+              <div className="flex justify-between text-charcoal/70"><span>Shipping</span><span>{isLebanon ? `$${shippingCost.toFixed(2)}` : "Via WhatsApp"}</span></div>
               <hr className="border-sand" />
               <div className="flex justify-between font-bold text-soft-black"><span>Total</span><span>${orderTotal.toFixed(2)}</span></div>
+              {!isLebanon && (
+                <p className="text-[11px] text-charcoal/50 text-right -mt-1">+ shipping fee, confirmed via WhatsApp</p>
+              )}
             </div>
           </div>
         </div>

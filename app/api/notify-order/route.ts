@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
       <!-- Totals -->
       <div style="background:#faf8f5;border-radius:12px;padding:18px 20px;margin-bottom:28px;">
         ${safeDiscount > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:8px;"><span>Discount</span><span style="color:#22c55e;">−$${safeDiscount.toFixed(2)}</span></div>` : ""}
-        <div style="display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:8px;"><span>Shipping</span><span>$${safeShipping.toFixed(2)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:8px;"><span>Shipping</span><span>${safeShipping === 0 && form.country !== "LB" ? "To be confirmed via WhatsApp" : `$${safeShipping.toFixed(2)}`}</span></div>
         <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:#1a1a1a;border-top:1px solid #e8e0d8;padding-top:12px;margin-top:4px;"><span>Total</span><span>$${safeTotal.toFixed(2)}</span></div>
       </div>
 

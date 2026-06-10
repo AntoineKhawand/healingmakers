@@ -428,7 +428,7 @@ function OrderDetailPanel({ order, onClose }: { order: StoredOrder; onClose: () 
             </div>
             <div className="mt-3 pt-3 border-t border-sand space-y-1 text-sm">
               <div className="flex justify-between text-charcoal/60"><span>Subtotal</span><span>${order.subtotal.toFixed(2)}</span></div>
-              <div className="flex justify-between text-charcoal/60"><span>Shipping</span><span>${order.shippingCost.toFixed(2)}</span></div>
+              <div className="flex justify-between text-charcoal/60"><span>Shipping</span><span>{order.shippingCost === 0 && order.form.country !== "LB" ? "To be confirmed via WhatsApp" : `$${order.shippingCost.toFixed(2)}`}</span></div>
               <div className="flex justify-between font-bold text-soft-black pt-1 border-t border-sand"><span>Total</span><span>${order.total.toFixed(2)}</span></div>
             </div>
           </div>
