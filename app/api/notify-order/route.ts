@@ -128,7 +128,7 @@ export async function POST(req: NextRequest) {
       ${totalsHtml}
 
       <!-- Payment -->
-      <div style="display:flex;align-items:center;gap:10px;background:#fdf3f0;border-radius:10px;padding:14px 18px;">
+      <div style="display:flex;align-items:center;gap:14px;background:#fdf3f0;border-radius:10px;padding:14px 18px;">
         <span style="font-size:20px;">💳</span>
         <div>
           <p style="margin:0;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">Payment Method</p>
@@ -170,6 +170,7 @@ export async function POST(req: NextRequest) {
 
     <!-- Header -->
     <div style="background:#1a1a1a;padding:28px 32px;text-align:center;">
+      <img src="https://healingmakerslb.com/email-heart.png" width="40" height="40" alt="HealingMakers" style="display:block;margin:0 auto 10px;border-radius:50%;" />
       <p style="margin:0;color:#c9a97a;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:600;">HealingMakers</p>
       <h1 style="margin:8px 0 0;color:#fff;font-size:22px;font-weight:700;">Thank you for your order! 🎉</h1>
       <p style="margin:8px 0 0;color:#ccc;font-size:13px;">Hi ${firstName || "there"}, we've got it and we're getting it ready with love.</p>
@@ -198,11 +199,19 @@ export async function POST(req: NextRequest) {
       </p>
 
       <!-- Next Steps -->
-      <div style="background:#fdf3f0;border-radius:10px;padding:16px 18px;">
+      <div style="background:#fdf3f0;border-radius:10px;padding:16px 18px;margin-bottom:16px;">
         <p style="margin:0 0 8px;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">What happens next</p>
         <ul style="margin:0;padding-left:18px;font-size:13px;color:#1a1a1a;line-height:1.7;">
           ${nextSteps.map((s) => `<li>${s}</li>`).join("")}
         </ul>
+      </div>
+
+      <!-- No Account Needed -->
+      <div style="display:flex;align-items:flex-start;gap:14px;background:#faf8f5;border-radius:10px;padding:14px 18px;">
+        <span style="font-size:14px;line-height:1.6;">ℹ️</span>
+        <p style="margin:0;font-size:12px;color:#888;line-height:1.7;">
+          <strong style="color:#1a1a1a;">No registration required.</strong> Your orders, wishlist, and loyalty points are saved automatically on this device. Just shop — everything is tracked for you.
+        </p>
       </div>
 
     </div>

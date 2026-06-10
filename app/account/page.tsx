@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Package, Heart, User, MapPin, Star, Gift, Zap, ShoppingBag, Info } from "lucide-react";
+import { Package, Heart, User, MapPin, Star, Gift, Zap, ShoppingBag, Info, Ruler } from "lucide-react";
 import { useLoyaltyStore, REDEEM_RATE, REDEEM_VALUE } from "@/lib/store/loyaltyStore";
+import { useSizeQuizStore } from "@/lib/store/sizeQuizStore";
 
 const menuItems = [
   { icon: Package, label: "My Orders", desc: "View and track your orders", href: "/account/orders" },
@@ -28,6 +29,7 @@ const tierNext: Record<string, number> = {
 
 export default function AccountPage() {
   const { points, tier, totalEarned, maxRedeemable, activeRedemption, redeemPoints } = useLoyaltyStore();
+  const { open: openSizeQuiz } = useSizeQuizStore();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -166,15 +168,26 @@ export default function AccountPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
         {[
           { label: "Gift Cards", href: "/gift-cards", icon: Gift },
-          { label: "Size Quiz", href: "#", icon: User },
+          { label: "Size Quiz", href: null, icon: Ruler },
           { label: "Lookbook", href: "/lookbook", icon: Star },
           { label: "Track Order", href: "/track-order", icon: Package },
-        ].map(({ label, href, icon: Icon }) => (
-          <Link key={label} href={href} className="flex flex-col items-center gap-2 p-4 bg-white border border-sand rounded-2xl hover:border-dusty-rose hover:text-dusty-rose transition-colors text-charcoal text-xs font-medium">
-            <Icon size={18} className="text-dusty-rose" />
-            {label}
-          </Link>
-        ))}
+        ].map(({ label, href, icon: Icon }) =>
+          href === null ? (
+            <button
+              key={label}
+              onClick={openSizeQuiz}
+              className="flex flex-col items-center gap-2 p-4 bg-white border border-sand rounded-2xl hover:border-dusty-rose hover:text-dusty-rose transition-colors text-charcoal text-xs font-medium"
+            >
+              <Icon size={18} className="text-dusty-rose" />
+              {label}
+            </button>
+          ) : (
+            <Link key={label} href={href} className="flex flex-col items-center gap-2 p-4 bg-white border border-sand rounded-2xl hover:border-dusty-rose hover:text-dusty-rose transition-colors text-charcoal text-xs font-medium">
+              <Icon size={18} className="text-dusty-rose" />
+              {label}
+            </Link>
+          )
+        )}
       </div>
 
     </div>

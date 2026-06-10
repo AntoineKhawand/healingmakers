@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Check, Smartphone, Truck, MessageCircle, ChevronRight, Lock, Tag, Gift, X, Sparkles } from "lucide-react";
@@ -9,6 +9,7 @@ import { useOrderStore } from "@/lib/store/orderStore";
 import { useDiscountStore, PROMO_CODE } from "@/lib/store/discountStore";
 import { useLoyaltyStore } from "@/lib/store/loyaltyStore";
 import { useGiftCardStore } from "@/lib/store/giftCardStore";
+import { useProfileStore } from "@/lib/store/profileStore";
 
 const steps = ["Contact & Shipping", "Shipping Method", "Payment"];
 
@@ -76,6 +77,7 @@ export default function CheckoutPage() {
   const { appliedCode, discountAmount, applyCode, removeCode, subscribed } = useDiscountStore();
   const { addPoints, activeRedemption, clearRedemption } = useLoyaltyStore();
   const { applied: gc, giftCardDiscount, applyGiftCard, removeGiftCard } = useGiftCardStore();
+  const { profile } = useProfileStore();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({ fullName: "", email: "", phone: "", address: "", city: "", country: "", zip: "" });
   const [phoneCode, setPhoneCode] = useState("+961");
@@ -89,6 +91,35 @@ export default function CheckoutPage() {
   const [promoError, setPromoError] = useState(false);
   const [gcInput, setGcInput] = useState("");
   const [gcError, setGcError] = useState(false);
+
+  // Pre-fill from saved profile (account/profile) on first mount
+  useEffect(() => {
+    if (!profile.fullName && !profile.email && !profile.phone && !profile.address) return;
+
+    let phone = profile.phone.trim();
+    const dial = DIAL_CODES.find((d) => phone.startsWith(d.code));
+    if (dial) {
+      setPhoneCode(dial.code);
+      phone = phone.slice(dial.code.length).trim();
+    } else if (COUNTRY_DIAL_CODES[profile.country]) {
+      setPhoneCode(COUNTRY_DIAL_CODES[profile.country]);
+    }
+
+    setForm({
+      fullName: profile.fullName,
+      email: profile.email,
+      phone,
+      address: profile.address,
+      city: profile.city,
+      country: profile.country,
+      zip: profile.zip,
+    });
+
+    if (profile.city && !(CITIES_BY_COUNTRY[profile.country] ?? []).includes(profile.city)) {
+      setCityMode("custom");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const update = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
