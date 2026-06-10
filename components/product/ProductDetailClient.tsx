@@ -259,16 +259,18 @@ export default function ProductDetailClient({ product }: { product: Product }) {
               {activeTab === "size-guide" && (
                 <div>
                   <p className="font-medium text-soft-black mb-2">Size Chart (cm)</p>
-                  <table className="w-full text-xs border-collapse">
-                    <thead><tr className="bg-cream">
-                      {["Size", "Chest", "Length", "Sleeve"].map(h => <th key={h} className="border border-sand px-2 py-1.5 text-left">{h}</th>)}
-                    </tr></thead>
-                    <tbody>
-                      {[["S","90","67","59"],["M","96","69","61"],["L","102","71","63"],["XL","108","73","65"],["XXL","114","75","67"],["XXXL","120","77","69"]].map(r => (
-                        <tr key={r[0]}>{r.map((c, i) => <td key={i} className="border border-sand px-2 py-1.5">{c}</td>)}</tr>
-                      ))}
-                    </tbody>
-                  </table>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs border-collapse">
+                      <thead><tr className="bg-cream">
+                        {["Size", "Chest", "Length", "Sleeve"].map(h => <th key={h} className="border border-sand px-2 py-1.5 text-left">{h}</th>)}
+                      </tr></thead>
+                      <tbody>
+                        {[["S","90","67","59"],["M","96","69","61"],["L","102","71","63"],["XL","108","73","65"],["XXL","114","75","67"],["XXXL","120","77","69"]].map(r => (
+                          <tr key={r[0]}>{r.map((c, i) => <td key={i} className="border border-sand px-2 py-1.5">{c}</td>)}</tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
               {activeTab === "shipping" && (
