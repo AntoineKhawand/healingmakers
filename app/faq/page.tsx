@@ -30,7 +30,7 @@ const faqs = [
   },
   {
     q: "Can I track my order?",
-    a: "Yes! Once your order ships, you'll receive a WhatsApp notification with your tracking number. You can also visit /track-order and enter your order number.",
+    a: "Yes! You'll get an order number (e.g. HM-1234567890123) right after checkout — enter it anytime at /track-order to see your live status. We'll also message you on WhatsApp with updates as your order is processed and shipped.",
   },
   {
     q: "How long does shipping take?",
