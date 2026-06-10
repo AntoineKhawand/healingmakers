@@ -220,7 +220,7 @@ export async function POST(req: NextRequest) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const sendJobs: Promise<unknown>[] = [
     resend.emails.send({
-      from: "HealingMakers Orders <onboarding@resend.dev>",
+      from: "HealingMakers Orders <orders@healingmakerslb.com>",
       to: process.env.ADMIN_EMAIL!,
       subject: `New Order ${String(orderId).slice(0, 50)} — $${safeTotal.toFixed(2)} (${String(form.fullName).slice(0, 80)})`,
       html: adminHtml,
@@ -229,12 +229,9 @@ export async function POST(req: NextRequest) {
 
   const customerEmail = typeof form.email === "string" ? form.email.trim() : "";
   if (EMAIL_REGEX.test(customerEmail)) {
-    // onboarding@resend.dev can only deliver to the Resend account's own verified
-    // address — a custom domain must be verified in Resend for this receipt to
-    // actually reach customers in production.
     sendJobs.push(
       resend.emails.send({
-        from: "HealingMakers <onboarding@resend.dev>",
+        from: "HealingMakers <orders@healingmakerslb.com>",
         to: customerEmail,
         subject: `Your HealingMakers Order ${String(orderId).slice(0, 50)} — Confirmed`,
         html: customerHtml,

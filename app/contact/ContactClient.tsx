@@ -47,6 +47,14 @@ export default function ContactPageClient() {
       .join("\n");
 
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(lines)}`, "_blank");
+
+    // Email the admin too (fire-and-forget)
+    fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    }).catch(() => {});
+
     setSubmitted(true);
   };
 
