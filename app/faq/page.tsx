@@ -10,7 +10,7 @@ const faqs = [
   },
   {
     q: "How do I place a custom order?",
-    a: "Visit our /customize page to build your custom piece step by step. You can choose the base product, color, size, your custom text (name/date/message), placement, and font style. Custom orders take 3–5 additional production days.",
+    a: "Visit our /customize page to build your custom piece step by step. You can choose the base product, color, size, your custom text (name/date/message), placement, and font style. Custom orders take 3–4 additional production days.",
   },
   {
     q: "What are your payment options?",
@@ -34,7 +34,7 @@ const faqs = [
   },
   {
     q: "How long does shipping take?",
-    a: "Delivery times vary by location. Standard orders are dispatched within 1–2 business days. Custom orders require an additional 7–10 production days before shipping. Delivery fee is a flat $5.",
+    a: "Delivery times vary by location. Standard orders are dispatched within 1–2 business days. Custom orders require an additional 3–4 production days before shipping. Delivery fee is a flat $5.",
   },
   {
     q: "What sizes do you carry?",

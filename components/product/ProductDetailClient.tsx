@@ -284,7 +284,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                     <Package size={16} className="text-dusty-rose mt-0.5 shrink-0" />
                     <div>
                       <p className="font-semibold text-soft-black text-xs mb-0.5">Custom Orders</p>
-                      <p className="text-charcoal/60 text-xs">Allow an additional 3–5 production days before dispatch.</p>
+                      <p className="text-charcoal/60 text-xs">Allow an additional 3–4 production days before dispatch.</p>
                     </div>
                   </div>
                   <p className="text-[11px] text-charcoal/45 pt-1">📦 Orders are carefully packaged and shipped directly from Lebanon.</p>
