@@ -28,6 +28,9 @@ const shippingMethods = [
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const NAME_REGEX = /^[A-Za-zÀ-ɏ؀-ۿ][A-Za-zÀ-ɏ؀-ۿ'.\- ]*$/;
 
+// Suggested domains shown while the user types the part after "@"
+const EMAIL_DOMAINS = ["gmail.com", "outlook.com", "hotmail.com", "yahoo.com", "icloud.com"];
+
 // Default WhatsApp/phone country code based on the selected shipping country
 const COUNTRY_DIAL_CODES: Record<string, string> = {
   LB: "+961", US: "+1", QA: "+974", CY: "+357", AE: "+971",
@@ -74,6 +77,7 @@ export default function CheckoutPage() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({ fullName: "", email: "", phone: "", address: "", city: "", country: "", zip: "" });
   const [phoneCode, setPhoneCode] = useState("+961");
+  const [emailFocused, setEmailFocused] = useState(false);
   const [cityMode, setCityMode] = useState<"select" | "custom">("select");
   const [shippingMethod, setShippingMethod] = useState("standard");
   const [paymentMethod, setPaymentMethod] = useState("card");
@@ -118,6 +122,13 @@ export default function CheckoutPage() {
 
   const isEmailValid  = EMAIL_REGEX.test(form.email.trim());
   const emailError    = form.email.length > 0 && !isEmailValid;
+
+  const emailAt = form.email.indexOf("@");
+  const emailLocal = emailAt === -1 ? form.email : form.email.slice(0, emailAt);
+  const emailDomainTyped = emailAt === -1 ? "" : form.email.slice(emailAt + 1).toLowerCase();
+  const emailSuggestions = emailLocal && !emailDomainTyped.includes(".")
+    ? EMAIL_DOMAINS.filter((d) => d.startsWith(emailDomainTyped) && d !== emailDomainTyped).map((d) => `${emailLocal}@${d}`)
+    : [];
 
   const phoneDigits   = form.phone.replace(/\D/g, "");
   const isPhoneValid  = phoneDigits.length === 0 || (phoneDigits.length >= 7 && phoneDigits.length <= 12);
@@ -240,15 +251,32 @@ export default function CheckoutPage() {
                   {nameError && <p className="text-xs text-red-500 mt-1.5">Please enter your full name (at least 2 characters).</p>}
                 </div>
 
-                <div>
+                <div className="relative">
                   <label className="block text-xs font-semibold text-charcoal/70 mb-1.5 uppercase tracking-wide">Email Address</label>
                   <input
                     type="email"
                     value={form.email}
-                    onChange={(e) => update("email", e.target.value)}
+                    onChange={(e) => { update("email", e.target.value); setEmailFocused(true); }}
+                    onFocus={() => setEmailFocused(true)}
+                    onBlur={() => setTimeout(() => setEmailFocused(false), 100)}
                     className={fieldClass(emailError)}
                   />
                   {emailError && <p className="text-xs text-red-500 mt-1.5">Please enter a valid email address.</p>}
+                  {emailFocused && emailSuggestions.length > 0 && (
+                    <ul className="absolute z-20 left-0 right-0 mt-1 bg-white border border-sand rounded-xl shadow-lg overflow-hidden">
+                      {emailSuggestions.map((s) => (
+                        <li key={s}>
+                          <button
+                            type="button"
+                            onMouseDown={(e) => { e.preventDefault(); update("email", s); setEmailFocused(false); }}
+                            className="w-full text-left px-4 py-2 text-sm text-charcoal/80 hover:bg-cream transition-colors"
+                          >
+                            {s}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
 
                 <div>
