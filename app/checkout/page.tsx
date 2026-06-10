@@ -466,7 +466,8 @@ export default function CheckoutPage() {
                   Back
                 </button>
                 <button onClick={() => setStep(2)} className="flex-1 bg-soft-black text-white py-3.5 rounded-xl text-sm font-medium hover:bg-charcoal transition-colors">
-                  Continue to Payment
+                  <span className="sm:hidden">Continue</span>
+                  <span className="hidden sm:inline">Continue to Payment</span>
                 </button>
               </div>
             </div>
@@ -536,7 +537,7 @@ export default function CheckoutPage() {
                   {loading ? (
                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
-                    <><Lock size={13} /> Place Order · ${orderTotal.toFixed(2)}</>
+                    <><Lock size={13} className="hidden sm:block" /> Place Order · ${orderTotal.toFixed(2)}</>
                   )}
                 </button>
               </div>
