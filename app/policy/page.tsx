@@ -1,6 +1,10 @@
 import { AlertTriangle } from "lucide-react";
 
-export const metadata = { title: "Policy — HealingMakers®" };
+export const metadata = {
+  title: "Policy",
+  description: "HealingMakers store policy: handcrafted, often personalized products are final sale — no exchanges or refunds, except for manufacturing defects reported within 48 hours.",
+  alternates: { canonical: "/policy" },
+};
 
 export default function PolicyPage() {
   return (

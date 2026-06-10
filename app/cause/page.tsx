@@ -9,8 +9,9 @@ const impactStats = [
 ];
 
 export const metadata = {
-  title: "Our Cause — HealingMakers®",
+  title: "Our Cause",
   description: "Every HealingMakers purchase funds medical donations through @medonations. Learn about our mission.",
+  alternates: { canonical: "/cause" },
 };
 
 export default function CausePage() {

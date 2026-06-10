@@ -29,8 +29,12 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: { category: string } }) {
-  const label = categoryLabels[params.category];
-  return { title: `${label || "Shop"} — HealingMakers®` };
+  const label = categoryLabels[params.category] || "Shop";
+  return {
+    title: label,
+    description: `Shop HealingMakers ${label} — purpose-driven clothing from Lebanon. Every purchase funds medical donations through @medonations.`,
+    alternates: { canonical: `/shop/${params.category}` },
+  };
 }
 
 export default function ShopCategoryPage({ params }: { params: { category: string } }) {
