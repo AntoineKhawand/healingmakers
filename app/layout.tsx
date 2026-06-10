@@ -25,7 +25,7 @@ const poppins = Poppins({
   variable: "--font-sans",
 });
 
-const BASE_URL = "https://healingmakers.com";
+const BASE_URL = "https://healingmakerslb.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -300,7 +300,7 @@ const jsonLd = {
           name: "How do I track my HealingMakers order?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Visit healingmakers.com/track-order and enter your order ID (format: HM-XXXXXX). You'll see real-time status updates from processing to delivery.",
+            text: "Visit healingmakerslb.com/track-order and enter your order ID (format: HM-XXXXXX). You'll see real-time status updates from processing to delivery.",
           },
         },
         {

@@ -115,7 +115,7 @@ export default function GiftCardsPage() {
                 )}
                 <p className="text-white/30 text-[10px] mt-3 flex items-center gap-1.5">
                   <Heart size={9} className="fill-dusty-rose text-dusty-rose" />
-                  Every purchase heals · healingmakers.com
+                  Every purchase heals · healingmakerslb.com
                 </p>
               </div>
             </div>

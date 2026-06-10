@@ -6,9 +6,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/account/", "/checkout/", "/cart/", "/api/", "/order-confirmation/"],
+        disallow: ["/account/", "/admin/", "/checkout/", "/cart/", "/api/", "/order-confirmation/"],
       },
     ],
-    sitemap: "https://healingmakers.com/sitemap.xml",
+    sitemap: "https://healingmakerslb.com/sitemap.xml",
   };
 }

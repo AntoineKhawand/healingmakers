@@ -78,7 +78,7 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
               <InstagramIcon size={15} /> @healingmakerslb
             </a>
             <a
-              href="https://wa.me/?text=Just%20ordered%20from%20HealingMakers!%20Check%20them%20out%20at%20healingmakers.com"
+              href="https://wa.me/?text=Just%20ordered%20from%20HealingMakers!%20Check%20them%20out%20at%20healingmakerslb.com"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 bg-green-500 text-white px-5 py-3 sm:py-2.5 rounded-full text-sm font-medium hover:bg-green-600 transition-colors"
