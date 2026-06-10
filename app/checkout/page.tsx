@@ -25,6 +25,8 @@ const shippingMethods = [
   { id: "standard", label: "Standard Delivery", sub: "Delivered straight to your door" },
 ];
 
+const WA_NUMBER = "96103786119";
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const NAME_REGEX = /^[A-Za-zÀ-ɏ؀-ۿ][A-Za-zÀ-ɏ؀-ۿ'.\- ]*$/;
 
@@ -156,6 +158,24 @@ export default function CheckoutPage() {
     const orderTotalSnapshot = subtotalSnapshot - discountSnapshot + shippingCost;
     const orderId = `HM-${Date.now()}`;
     const now = new Date().toISOString();
+
+    // Open WhatsApp confirmation now, while still inside the click's user-gesture
+    // context — opening it after the await below gets blocked as a popup.
+    if (paymentMethod === "whatsapp") {
+      const lines = [
+        `Hi HealingMakers! 👋`,
+        ``,
+        `I'd like to confirm my order *${orderId}*:`,
+        ``,
+        ...itemsSnapshot.map(
+          (it) => `• ${it.product.name} (${it.size} / ${it.color.name}) x${it.quantity} — $${((it.overridePrice ?? it.product.price) * it.quantity).toFixed(2)}`
+        ),
+        ``,
+        `*Total: $${orderTotalSnapshot.toFixed(2)}*`,
+      ].join("\n");
+      window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(lines)}`, "_blank");
+    }
+
     await new Promise((r) => setTimeout(r, 1500));
     addOrder({
       id: orderId,
