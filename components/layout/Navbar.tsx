@@ -40,11 +40,16 @@ export default function Navbar() {
   const [scrolled, setScrolled]       = useState(false);
   const [searchOpen, setSearchOpen]   = useState(false);
   const [query, setQuery]             = useState("");
+  const [mounted, setMounted]         = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   const { itemCount, openCart } = useCartStore();
   const wishlist = useWishlistStore((s) => s.items);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
@@ -141,7 +146,7 @@ export default function Navbar() {
 
               <Link href="/account/wishlist" className="p-2 text-charcoal hover:text-dusty-rose transition-colors relative hidden sm:flex">
                 <Heart size={20} />
-                {wishlist.length > 0 && (
+                {mounted && wishlist.length > 0 && (
                   <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-dusty-rose rounded-full text-white text-[9px] flex items-center justify-center font-semibold">
                     {wishlist.length}
                   </span>
@@ -153,7 +158,7 @@ export default function Navbar() {
                 className="p-2 text-charcoal hover:text-dusty-rose transition-colors relative"
               >
                 <ShoppingBag size={20} />
-                {itemCount() > 0 && (
+                {mounted && itemCount() > 0 && (
                   <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-soft-black rounded-full text-white text-[9px] flex items-center justify-center font-semibold">
                     {itemCount()}
                   </span>

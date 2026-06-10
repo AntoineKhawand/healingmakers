@@ -70,7 +70,7 @@ export default function FlashSaleBanner() {
               <div key={l} className="flex items-center gap-0.5">
                 <div className="bg-white/20 rounded-md w-8 h-8 flex flex-col items-center justify-center border border-white/25">
                   <span className="font-bold text-white text-xs leading-none">{pad(v)}</span>
-                  <span className="text-white/65 text-[7px] leading-none mt-0.5">{l}</span>
+                  <span className="text-white/65 text-[8px] leading-none mt-0.5">{l}</span>
                 </div>
                 {i < 3 && <span className="text-white/60 font-bold text-[10px]">:</span>}
               </div>

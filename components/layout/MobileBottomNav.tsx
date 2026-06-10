@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Home, Grid3X3, ShoppingBag, Heart, User } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -19,8 +20,11 @@ export default function MobileBottomNav() {
   const { itemCount, openCart } = useCartStore();
   const wishlist = useWishlistStore((s) => s.items);
 
-  const cartCount = itemCount();
-  const wishlistCount = wishlist.length;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const cartCount = mounted ? itemCount() : 0;
+  const wishlistCount = mounted ? wishlist.length : 0;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/97 backdrop-blur-xl border-t border-sand/80 lg:hidden">

@@ -189,11 +189,11 @@ export default function ProductDetailClient({ product }: { product: Product }) {
           {/* Quantity + CTA */}
           <div className="flex flex-col sm:flex-row gap-3 mb-5">
             <div className="flex items-center gap-3 border border-sand rounded-xl px-3 sm:w-auto">
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="py-3 text-charcoal hover:text-dusty-rose">
+              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="py-3 px-2 text-charcoal hover:text-dusty-rose">
                 <Minus size={16} />
               </button>
               <span className="font-medium text-sm w-5 text-center">{quantity}</span>
-              <button onClick={() => setQuantity(quantity + 1)} className="py-3 text-charcoal hover:text-dusty-rose">
+              <button onClick={() => setQuantity(quantity + 1)} className="py-3 px-2 text-charcoal hover:text-dusty-rose">
                 <Plus size={16} />
               </button>
             </div>

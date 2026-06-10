@@ -38,7 +38,7 @@ export default function AnnouncementBar() {
       </p>
       <button
         onClick={() => setDismissed(true)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors p-1"
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors p-1.5"
         aria-label="Dismiss announcement"
       >
         <X size={13} />
