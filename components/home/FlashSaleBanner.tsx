@@ -6,8 +6,8 @@ import { Zap, ArrowRight } from "lucide-react";
 
 // Flash sale ends at the autumn equinox — Sept 22 2026 23:59 Beirut time
 const SALE_END = new Date("2026-09-22T23:59:59+03:00").getTime();
-const SALE_LABEL = "Summer Flash Sale — 20% off everything";
-const SALE_CODE = "HEAL20";
+const SALE_LABEL = "Summer Flash Sale — 10% off everything";
+const SALE_CODE = "HEAL10";
 
 function pad(n: number) {
   return String(n).padStart(2, "0");
@@ -62,7 +62,7 @@ export default function FlashSaleBanner() {
             <p className="text-white font-bold text-[11px] leading-tight">
               Sale&nbsp;
               <span className="font-mono bg-white/20 px-1 py-0.5 rounded font-bold">{SALE_CODE}</span>
-              &nbsp;— 20% off
+              &nbsp;— 10% off
             </p>
           </div>
           <div className="flex items-center gap-0.5 shrink-0">
