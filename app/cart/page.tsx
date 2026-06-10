@@ -186,7 +186,7 @@ export default function CartPage() {
                     Apply
                   </button>
                 </div>
-                {promoError && <p className="text-xs text-red-500 mt-1.5">Invalid code. Try WELCOME10.</p>}
+                {promoError && <p className="text-xs text-red-500 mt-1.5">Invalid code.</p>}
                 {!subscribed && (
                   <p className="text-xs text-charcoal/40 mt-2">
                     Subscribe to our newsletter on the homepage to get your code.

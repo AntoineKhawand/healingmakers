@@ -4,6 +4,13 @@ import { persist } from "zustand/middleware";
 export const PROMO_CODE = "WELCOME10";
 export const PROMO_DISCOUNT = 0.10;
 
+// All valid promo codes and their discount rate. Only one code can be
+// applied at a time (single `appliedCode` field), so codes never stack.
+const VALID_CODES: Record<string, number> = {
+  WELCOME10: 0.10,
+  HEAL10: 0.10,
+};
+
 interface DiscountStore {
   subscribed: boolean;
   subscribedEmail: string;
@@ -24,8 +31,9 @@ export const useDiscountStore = create<DiscountStore>()(
       subscribe: (email) => set({ subscribed: true, subscribedEmail: email }),
 
       applyCode: (code) => {
-        if (code.toUpperCase() === PROMO_CODE) {
-          set({ appliedCode: PROMO_CODE });
+        const upper = code.toUpperCase();
+        if (upper in VALID_CODES) {
+          set({ appliedCode: upper });
           return true;
         }
         return false;
@@ -33,8 +41,10 @@ export const useDiscountStore = create<DiscountStore>()(
 
       removeCode: () => set({ appliedCode: null }),
 
-      discountAmount: (subtotal) =>
-        get().appliedCode === PROMO_CODE ? subtotal * PROMO_DISCOUNT : 0,
+      discountAmount: (subtotal) => {
+        const code = get().appliedCode;
+        return code && code in VALID_CODES ? subtotal * VALID_CODES[code] : 0;
+      },
     }),
     { name: "healingmakers-discount" }
   )
