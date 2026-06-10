@@ -164,7 +164,7 @@ export default function CheckoutPage() {
     : [];
 
   const phoneDigits   = form.phone.replace(/\D/g, "");
-  const isPhoneValid  = phoneDigits.length === 0 || (phoneDigits.length >= 7 && phoneDigits.length <= 12);
+  const isPhoneValid  = phoneDigits.length >= 7 && phoneDigits.length <= 12;
   const phoneError    = form.phone.length > 0 && !isPhoneValid;
 
   const isCityValid   = form.city.trim().length >= 2;
