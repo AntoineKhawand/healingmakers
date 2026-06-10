@@ -19,7 +19,7 @@ const INFO_CARDS = [
     desc: "DM us @healingmakerslb",
     action: { label: "@healingmakerslb", href: "https://instagram.com/healingmakerslb", color: "bg-soft-black hover:bg-charcoal" },
   },
-  { icon: Mail,  title: "Email",          desc: "hello@healingmakers.com",        action: null },
+  { icon: Mail,  title: "Email",          desc: "hello@healingmakerslb.com",        action: null },
   { icon: MapPin, title: "Made in",        desc: "Beirut, Lebanon",                action: null },
   { icon: Clock,  title: "Business Hours", desc: "Mon–Sat, 9 am – 7 pm (Beirut)", action: null },
 ];

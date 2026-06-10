@@ -42,7 +42,7 @@ const faqs = [
   },
   {
     q: "I want to order in bulk / for a corporate gift. Can I?",
-    a: "Absolutely! We offer bulk and corporate custom orders. Contact us via WhatsApp or email at hello@healingmakers.com for pricing and options.",
+    a: "Absolutely! We offer bulk and corporate custom orders. Contact us via WhatsApp or email at hello@healingmakerslb.com for pricing and options.",
   },
 ];
 
