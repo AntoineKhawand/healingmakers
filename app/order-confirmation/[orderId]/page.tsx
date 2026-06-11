@@ -42,8 +42,8 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
           Order #{params.orderId}
         </p>
 
-        {/* Info cards — horizontal scroll on mobile, grid on sm+ */}
-        <div className="flex sm:grid sm:grid-cols-3 gap-3 mb-8 overflow-x-auto pb-1 sm:pb-0 snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0">
+        {/* Info cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
           {[
             { icon: Package,      title: "Order Processing",       desc: "You'll get a WhatsApp update when your order ships" },
             { icon: MessageCircle, title: "WhatsApp Updates",      desc: "Track your order status via WhatsApp" },
@@ -51,7 +51,7 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
           ].map(({ icon: Icon, title, desc }) => (
             <div
               key={title}
-              className="bg-cream rounded-2xl p-4 sm:p-5 text-center shrink-0 snap-start w-[72vw] sm:w-auto"
+              className="bg-cream rounded-2xl p-4 sm:p-5 text-center"
             >
               <Icon size={22} className="text-dusty-rose mx-auto mb-2" />
               <p className="font-semibold text-soft-black text-xs sm:text-sm mb-1 leading-snug">{title}</p>
