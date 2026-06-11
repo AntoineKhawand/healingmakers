@@ -28,7 +28,7 @@ export default function MobileBottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/97 backdrop-blur-xl border-t border-sand/80 lg:hidden">
-      <div className="flex items-center justify-around px-1 py-1.5 pb-safe">
+      <div className="flex items-center justify-around px-1 py-1.5 pb-safe bg-white">
         {tabs.map(({ icon: Icon, label, href }) => {
           const isCart = href === "#cart";
           const isWishlist = href === "/account/wishlist";
