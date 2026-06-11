@@ -7,17 +7,19 @@ import { Gift, Heart, ArrowRight, Check, MessageCircle, Clock, Send } from "luci
 const amounts = [25, 50, 75, 100, 150, 200];
 
 const WA_NUMBER = "96103786119";
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function GiftCardsPageClient() {
   const [selected, setSelected]           = useState<number | null>(50);
   const [custom, setCustom]               = useState("");
+  const [purchaserEmail, setPurchaserEmail] = useState("");
   const [recipientName, setRecipientName] = useState("");
   const [recipientEmail, setRecipientEmail] = useState("");
   const [message, setMessage]             = useState("");
   const [sent, setSent]                   = useState(false);
 
   const finalAmount = custom ? parseInt(custom, 10) || 0 : selected ?? 0;
-  const canOrder    = finalAmount >= 10 && recipientName.trim().length > 0;
+  const canOrder    = finalAmount >= 10 && recipientName.trim().length > 0 && EMAIL_REGEX.test(purchaserEmail.trim());
 
   const handleOrder = () => {
     if (!canOrder) return;
@@ -27,6 +29,7 @@ export default function GiftCardsPageClient() {
       `I'd like to purchase a *$${finalAmount} Gift Card*.`,
       ``,
       `📋 *Details:*`,
+      `• Your email: ${purchaserEmail.trim()}`,
       `• Recipient: ${recipientName.trim()}`,
       recipientEmail.trim() ? `• Email: ${recipientEmail.trim()}` : null,
       message.trim() ? `• Personal message: "${message.trim()}"` : null,
@@ -35,6 +38,19 @@ export default function GiftCardsPageClient() {
       .join("\n");
 
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(lines)}`, "_blank");
+
+    fetch("/api/notify-giftcard", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amount: finalAmount,
+        purchaserEmail: purchaserEmail.trim(),
+        recipientName: recipientName.trim(),
+        recipientEmail: recipientEmail.trim(),
+        message: message.trim(),
+      }),
+    }).catch(() => {});
+
     setSent(true);
   };
 
@@ -175,6 +191,21 @@ export default function GiftCardsPageClient() {
                   />
                 </div>
 
+                {/* Purchaser email */}
+                <div>
+                  <label className="text-sm font-semibold text-soft-black block mb-2">
+                    Your Email <span className="text-dusty-rose">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    value={purchaserEmail}
+                    onChange={(e) => setPurchaserEmail(e.target.value)}
+                    placeholder="you@email.com"
+                    className="w-full border border-sand px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-dusty-rose transition-colors placeholder:text-charcoal/35"
+                  />
+                  <p className="text-xs text-charcoal/40 mt-1.5">We&apos;ll send your order confirmation here.</p>
+                </div>
+
                 {/* Recipient */}
                 <div>
                   <label className="text-sm font-semibold text-soft-black block mb-2">
@@ -220,7 +251,10 @@ export default function GiftCardsPageClient() {
                   <ArrowRight size={15} />
                 </button>
 
-                {!recipientName.trim() && finalAmount >= 10 && (
+                {finalAmount >= 10 && !EMAIL_REGEX.test(purchaserEmail.trim()) && (
+                  <p className="text-center text-xs text-dusty-rose">Please enter a valid email address to continue.</p>
+                )}
+                {finalAmount >= 10 && EMAIL_REGEX.test(purchaserEmail.trim()) && !recipientName.trim() && (
                   <p className="text-center text-xs text-dusty-rose">Please enter the recipient&apos;s name to continue.</p>
                 )}
               </motion.div>
@@ -279,7 +313,7 @@ export default function GiftCardsPageClient() {
                 </div>
 
                 <button
-                  onClick={() => { setSent(false); setRecipientName(""); setRecipientEmail(""); setMessage(""); setSelected(50); setCustom(""); }}
+                  onClick={() => { setSent(false); setPurchaserEmail(""); setRecipientName(""); setRecipientEmail(""); setMessage(""); setSelected(50); setCustom(""); }}
                   className="w-full border-2 border-sand text-charcoal py-3.5 rounded-xl text-sm font-semibold hover:border-dusty-rose hover:text-dusty-rose transition-colors"
                 >
                   Purchase another gift card

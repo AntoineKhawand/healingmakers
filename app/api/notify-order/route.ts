@@ -40,9 +40,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
-  const { orderId, form, items, paymentMethod, shippingCost, discount, total } = body as {
+  const { orderId, form, items, paymentMethod, shippingCost, discount, giftCard, total } = body as {
     orderId: unknown; form: Record<string, unknown>; items: unknown[];
-    paymentMethod: unknown; shippingCost: unknown; discount: unknown; total: unknown;
+    paymentMethod: unknown; shippingCost: unknown; discount: unknown;
+    giftCard: { code: unknown; amount: unknown } | null | undefined; total: unknown;
   };
 
   if (!orderId || !form || !Array.isArray(items) || items.length === 0) {
@@ -54,6 +55,11 @@ export async function POST(req: NextRequest) {
   const safeShipping = typeof shippingCost === "number" ? shippingCost : 0;
   const isInternational = safeShipping === 0 && form.country !== "LB";
   const shippingLabel = isInternational ? "To be confirmed via WhatsApp" : `$${safeShipping.toFixed(2)}`;
+
+  const safeGiftCardAmount = typeof giftCard?.amount === "number" ? giftCard.amount : 0;
+  const giftCardCode = typeof giftCard?.code === "string" ? giftCard.code : "";
+  const hasGiftCard = !!giftCardCode && safeGiftCardAmount > 0;
+  const otherDiscount = safeDiscount - (hasGiftCard ? safeGiftCardAmount : 0);
 
   const itemRows = items
     .map(
@@ -85,7 +91,8 @@ export async function POST(req: NextRequest) {
 
   const totalsHtml = `
       <div style="background:#faf8f5;border-radius:12px;padding:18px 20px;margin-bottom:28px;">
-        ${safeDiscount > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:8px;"><span>Discount</span><span style="color:#22c55e;">−$${safeDiscount.toFixed(2)}</span></div>` : ""}
+        ${otherDiscount > 0 ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:8px;"><span>Discount</span><span style="color:#22c55e;">−$${otherDiscount.toFixed(2)}</span></div>` : ""}
+        ${hasGiftCard ? `<div style="display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:8px;"><span>Gift Card Applied (${esc(giftCardCode)})</span><span style="color:#22c55e;">−$${safeGiftCardAmount.toFixed(2)}</span></div>` : ""}
         <div style="display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:8px;"><span>Shipping</span><span>${shippingLabel}</span></div>
         <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:#1a1a1a;border-top:1px solid #e8e0d8;padding-top:12px;margin-top:4px;"><span>Total</span><span>$${safeTotal.toFixed(2)}</span></div>
       </div>`;

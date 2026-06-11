@@ -246,6 +246,7 @@ export default function CheckoutPage() {
         paymentMethod: payLabel,
         shippingCost,
         discount: discountSnapshot,
+        giftCard: gc ? { code: gc.code, amount: gcSnapshot } : null,
         total: orderTotalSnapshot,
       }),
     }).catch(() => {}); // non-blocking — order still completes if email fails
