@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { products } from "@/lib/data/products";
 import ProductCard from "@/components/ui/ProductCard";
+
+const ITEMS_PER_PAGE = 8;
 
 const fadeUp = (i: number) => ({
   hidden: { opacity: 0, y: 28 },
@@ -17,6 +20,9 @@ const fadeUp = (i: number) => ({
 
 export default function Bestsellers() {
   const bestsellers = products.filter((p) => p.tags.includes("Bestseller"));
+  const [page, setPage] = useState(0);
+  const totalPages = Math.ceil(bestsellers.length / ITEMS_PER_PAGE);
+  const visible = bestsellers.slice(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE);
 
   return (
     <section className="bg-cream py-16 lg:py-24">
@@ -47,7 +53,7 @@ export default function Bestsellers() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 lg:gap-6">
-          {bestsellers.map((product, i) => (
+          {visible.map((product, i) => (
             <motion.div
               key={product.id}
               initial="hidden"
@@ -59,6 +65,41 @@ export default function Bestsellers() {
             </motion.div>
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-10">
+            <button
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              disabled={page === 0}
+              aria-label="Previous page"
+              className="w-9 h-9 flex items-center justify-center rounded-full border border-charcoal/15 text-charcoal hover:border-dusty-rose hover:text-dusty-rose transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-charcoal/15 disabled:hover:text-charcoal"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setPage(i)}
+                aria-label={`Page ${i + 1}`}
+                className={`w-9 h-9 rounded-full text-sm font-medium transition-colors ${
+                  i === page
+                    ? "bg-soft-black text-white"
+                    : "border border-charcoal/15 text-charcoal hover:border-dusty-rose hover:text-dusty-rose"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              disabled={page === totalPages - 1}
+              aria-label="Next page"
+              className="w-9 h-9 flex items-center justify-center rounded-full border border-charcoal/15 text-charcoal hover:border-dusty-rose hover:text-dusty-rose transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-charcoal/15 disabled:hover:text-charcoal"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
 
         <motion.div
           className="text-center mt-10"
