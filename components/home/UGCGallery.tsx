@@ -19,13 +19,13 @@ const ugcPosts = [
     likes: 445,
   },
   {
-    image: "/community/jessica-obeid-1.png",
+    image: "/community/jessica-obeid-2.png",
     handle: "@jessica_obeid",
     caption: "Matchday energy in my favorite hoodie ⚽🖤",
     likes: 189,
   },
   {
-    image: "/community/jessica-obeid-2.png",
+    image: "/community/jessica-obeid-1.png",
     handle: "@jessica_obeid",
     caption: "\"You are the right...\" obsessed with this one 🤍",
     likes: 522,
