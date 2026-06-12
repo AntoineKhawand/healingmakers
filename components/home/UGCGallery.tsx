@@ -13,9 +13,9 @@ const ugcPosts = [
     likes: 312,
   },
   {
-    image: "/community/clarine-nadine.png",
-    handle: "@clvrine @nadinehmd",
-    caption: "Matching tees, matching energy 💙 Who makes you happy?",
+    image: "/community/jessica-obeid-2.png",
+    handle: "@jessica_obeid",
+    caption: "\"You are the right...\" obsessed with this one 🤍",
     likes: 218,
   },
   {
