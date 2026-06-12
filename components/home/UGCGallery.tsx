@@ -13,12 +13,6 @@ const ugcPosts = [
     likes: 312,
   },
   {
-    image: "/community/jessica-obeid-2.png",
-    handle: "@jessica_obeid",
-    caption: "\"You are the right...\" obsessed with this one 🤍",
-    likes: 218,
-  },
-  {
     image: "/community/helena-andraos.png",
     handle: "@helenaandraos",
     caption: "Ski season uniform: sorted ❄️ so cozy in the snow",
@@ -35,6 +29,12 @@ const ugcPosts = [
     handle: "@jessica_obeid",
     caption: "\"You are the right...\" obsessed with this one 🤍",
     likes: 522,
+  },
+  {
+    image: "/community/clarine-nadine.png",
+    handle: "@clvrine @nadinehmd",
+    caption: "Matching tees, matching energy 💙 Who makes you happy?",
+    likes: 218,
   },
   {
     image: "/community/yasmina-audi.png",
