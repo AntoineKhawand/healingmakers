@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Heart } from "lucide-react";
 import InstagramIcon from "@/components/ui/InstagramIcon";
 
@@ -46,13 +47,14 @@ export default function Footer() {
 
         {/* Brand Column */}
         <div>
-          <div className="flex items-center gap-2.5 mb-5">
-            <div className="w-9 h-9 bg-dusty-rose rounded-full flex items-center justify-center shrink-0">
-              <span className="text-white text-xs font-playfair font-bold tracking-wide">HM</span>
-            </div>
-            <span className="font-playfair font-bold text-lg tracking-wide">
-              HealingMakers<span className="text-dusty-rose">®</span>
-            </span>
+          <div className="mb-5">
+            <Image
+              src="/logo-white.png"
+              alt="Healing Makers"
+              width={871}
+              height={216}
+              className="h-9 w-auto object-contain"
+            />
           </div>
           <p className="text-white/55 text-sm leading-relaxed mb-5">
             Proudly Made in Lebanon. Every purchase supports medical donations through @medonations.

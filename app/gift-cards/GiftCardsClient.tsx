@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Gift, Heart, ArrowRight, Check, MessageCircle, Clock, Send } from "lucide-react";
 
@@ -111,12 +112,13 @@ export default function GiftCardsPageClient() {
             <div className="relative p-7 h-full flex flex-col justify-between">
               {/* Top row: brand */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-dusty-rose rounded-full flex items-center justify-center shrink-0">
-                    <span className="text-white text-[10px] font-bold tracking-wide">HM</span>
-                  </div>
-                  <span className="text-white font-playfair font-bold text-base tracking-wide">HealingMakers®</span>
-                </div>
+                <Image
+                  src="/logo-white.png"
+                  alt="Healing Makers"
+                  width={871}
+                  height={216}
+                  className="h-7 w-auto object-contain"
+                />
                 <Gift size={16} className="text-white/30" />
               </div>
 
