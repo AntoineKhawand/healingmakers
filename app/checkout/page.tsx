@@ -55,6 +55,24 @@ const DIAL_CODES = [
   { code: "+61", flag: "🇦🇺" },
 ];
 
+// Expected local number length (excluding the dial code) per country
+const PHONE_LENGTHS: Record<string, [number, number]> = {
+  "+961": [7, 7],   // Lebanon
+  "+1":   [10, 10], // US
+  "+971": [9, 9],   // UAE
+  "+966": [9, 9],   // Saudi Arabia
+  "+974": [8, 8],   // Qatar
+  "+965": [8, 8],   // Kuwait
+  "+962": [9, 9],   // Jordan
+  "+20":  [10, 10], // Egypt
+  "+357": [8, 8],   // Cyprus
+  "+44":  [10, 10], // UK
+  "+33":  [9, 9],   // France
+  "+49":  [10, 11], // Germany
+  "+61":  [9, 9],   // Australia
+};
+const DEFAULT_PHONE_LENGTH: [number, number] = [7, 12];
+
 // City dropdown options per country — falls back to free text when not listed
 const CITIES_BY_COUNTRY: Record<string, string[]> = {
   LB: ["Beirut", "Tripoli", "Sidon (Saida)", "Tyre (Sour)", "Jounieh", "Zahle", "Baalbek", "Byblos (Jbeil)", "Nabatieh", "Batroun", "Aley", "Zahrani"],
@@ -150,7 +168,7 @@ export default function CheckoutPage() {
   const shippingCost  = isLebanon ? 5 : 0;
   const cityOptions   = CITIES_BY_COUNTRY[form.country] ?? [];
 
-  const isNameValid   = form.fullName.trim().length >= 2 && NAME_REGEX.test(form.fullName.trim());
+  const isNameValid   = form.fullName.trim().length >= 5 && NAME_REGEX.test(form.fullName.trim());
   const nameError     = form.fullName.length > 0 && !isNameValid;
 
   const isEmailValid  = EMAIL_REGEX.test(form.email.trim());
@@ -164,7 +182,8 @@ export default function CheckoutPage() {
     : [];
 
   const phoneDigits   = form.phone.replace(/\D/g, "");
-  const isPhoneValid  = phoneDigits.length >= 7 && phoneDigits.length <= 12;
+  const [minPhoneLen, maxPhoneLen] = PHONE_LENGTHS[phoneCode] ?? DEFAULT_PHONE_LENGTH;
+  const isPhoneValid  = phoneDigits.length >= minPhoneLen && phoneDigits.length <= maxPhoneLen;
   const phoneError    = form.phone.length > 0 && !isPhoneValid;
 
   const isCityValid   = form.city.trim().length >= 2;
@@ -300,7 +319,7 @@ export default function CheckoutPage() {
                     onChange={(e) => update("fullName", e.target.value)}
                     className={fieldClass(nameError)}
                   />
-                  {nameError && <p className="text-xs text-red-500 mt-1.5">Please enter your full name (at least 2 characters).</p>}
+                  {nameError && <p className="text-xs text-red-500 mt-1.5">Please enter your full name (at least 5 characters).</p>}
                 </div>
 
                 <div className="relative">
@@ -349,7 +368,13 @@ export default function CheckoutPage() {
                       className={`flex-1 min-w-0 ${fieldClass(phoneError)}`}
                     />
                   </div>
-                  {phoneError && <p className="text-xs text-red-500 mt-1.5">Please enter a valid phone number.</p>}
+                  {phoneError && (
+                    <p className="text-xs text-red-500 mt-1.5">
+                      {minPhoneLen === maxPhoneLen
+                        ? `Please enter a valid phone number (${minPhoneLen} digits for this country code).`
+                        : `Please enter a valid phone number (${minPhoneLen}-${maxPhoneLen} digits for this country code).`}
+                    </p>
+                  )}
                 </div>
 
                 <div>
