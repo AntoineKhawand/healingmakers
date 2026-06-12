@@ -36,7 +36,7 @@ const aboutLinks = [
   { label: "Our Cause", href: "/cause" },
   { label: "Reviews", href: "/reviews" },
   { label: "Lookbook", href: "/lookbook" },
-  { label: "Upcoming Drops", href: "/drops" },
+  { label: "Gift Cards", href: "/gift-cards" },
 ];
 
 export default function Footer() {
