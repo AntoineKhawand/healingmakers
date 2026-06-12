@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 const navLinks = [
   { label: "Shop", href: "/shop" },
   { label: "Bundle & Save", href: "/bundle" },
-  { label: "Drops", href: "/drops" },
+  { label: "Gift Cards", href: "/gift-cards" },
   { label: "Lookbook", href: "/lookbook" },
   { label: "Our Cause", href: "/cause" },
 ];
