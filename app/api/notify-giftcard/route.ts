@@ -103,7 +103,6 @@ export async function POST(req: NextRequest) {
 
     <!-- Header -->
     <div style="background:#1a1a1a;padding:28px 32px;text-align:center;">
-      <img src="https://healingmakerslb.com/email-heart.png" width="40" height="40" alt="HealingMakers" style="display:block;margin:0 auto 10px;border-radius:50%;" />
       <p style="margin:0;color:#c9a97a;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:600;">HealingMakers</p>
       <h1 style="margin:8px 0 0;color:#fff;font-size:22px;font-weight:700;">Gift Card Request Received! 🎁</h1>
       <p style="margin:8px 0 0;color:#ccc;font-size:13px;">We've got your $${safeAmount.toFixed(2)} gift card request${safeRecipientName ? ` for ${safeRecipientName}` : ""}.</p>
