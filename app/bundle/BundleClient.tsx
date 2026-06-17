@@ -133,6 +133,7 @@ export default function BundlePageClient() {
                   return (
                     <div key={id} className="flex items-center gap-3">
                       <div className="relative w-12 h-14 rounded-xl overflow-hidden bg-light-sand shrink-0">
+                        <Image src={p.images[0]} alt={p.name} fill className="object-contain" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-soft-black text-xs font-medium leading-tight truncate">{p.name}</p>
