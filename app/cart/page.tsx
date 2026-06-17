@@ -81,7 +81,6 @@ export default function CartPage() {
                   alt={item.product.name}
                   fill
                   className="object-contain"
-                  unoptimized={item.product.images[0].endsWith(".svg")}
                 />
               </div>
               <div className="flex-1 min-w-0">

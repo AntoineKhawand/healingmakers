@@ -61,7 +61,7 @@ export default function Bestsellers() {
               viewport={{ once: true, margin: "-40px" }}
               variants={fadeUp(i)}
             >
-              <ProductCard product={product} />
+              <ProductCard product={product} priority={i < 4} />
             </motion.div>
           ))}
         </div>

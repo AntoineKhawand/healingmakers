@@ -100,7 +100,6 @@ export default function CustomizePageClient() {
             fill
             className="object-contain transition-transform duration-500 group-hover:scale-110"
             sizes="(max-width: 1024px) 100vw, 50vw"
-            unoptimized
           />
 
           {/* Zoom hint */}
@@ -153,7 +152,6 @@ export default function CustomizePageClient() {
                 alt={selectedProduct.name}
                 fill
                 className="object-contain"
-                unoptimized
               />
             </div>
           </div>
@@ -174,7 +172,7 @@ export default function CustomizePageClient() {
                     }`}
                   >
                     <div className="relative w-16 h-16 bg-sand rounded-xl overflow-hidden shrink-0">
-                      <Image src={p.images[0]} alt={p.name} fill className="object-contain scale-[1.35] transition-transform duration-300 group-hover:scale-[1.5]" unoptimized />
+                      <Image src={p.images[0]} alt={p.name} fill className="object-contain scale-[1.35] transition-transform duration-300 group-hover:scale-[1.5]" />
                     </div>
                     <div className="flex-1">
                       <p className="font-medium text-soft-black text-sm">{p.name}</p>

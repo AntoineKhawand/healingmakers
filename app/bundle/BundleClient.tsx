@@ -99,7 +99,6 @@ export default function BundlePageClient() {
                       fill
                       className="object-contain scale-[1.12]"
                       sizes="(max-width: 640px) 50vw, 33vw"
-                      unoptimized={product.images[0].endsWith(".svg")}
                     />
                     {isSelected && (
                       <div className="absolute top-2 right-2 w-7 h-7 bg-dusty-rose rounded-full flex items-center justify-center shadow">
@@ -134,7 +133,6 @@ export default function BundlePageClient() {
                   return (
                     <div key={id} className="flex items-center gap-3">
                       <div className="relative w-12 h-14 rounded-xl overflow-hidden bg-light-sand shrink-0">
-                        <Image src={p.images[0]} alt={p.name} fill className="object-contain" unoptimized={p.images[0].endsWith(".svg")} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-soft-black text-xs font-medium leading-tight truncate">{p.name}</p>

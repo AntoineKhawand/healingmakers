@@ -235,7 +235,6 @@ export default function Navbar() {
                             alt={p.name}
                             fill
                             className="object-contain p-1"
-                            unoptimized={p.images[0].endsWith(".svg")}
                           />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -297,7 +296,6 @@ export default function Navbar() {
                             alt={p.name}
                             fill
                             className="object-contain scale-[1.12] group-hover:scale-[1.16] transition-transform duration-500 ease-out"
-                            unoptimized={p.images[0].endsWith(".svg")}
                           />
                         </div>
                         <p className="text-xs font-semibold text-soft-black truncate group-hover:text-dusty-rose transition-colors px-0.5">{p.name}</p>

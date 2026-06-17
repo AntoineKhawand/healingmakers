@@ -59,7 +59,6 @@ export default function ProductDetailClient({ product }: { product: Product }) {
               priority
               className="object-cover scale-[1.03]"
               sizes="(max-width: 1024px) 100vw, 50vw"
-              unoptimized={product.images[selectedImage].endsWith(".svg")}
             />
             {product.tags.length > 0 && (
               <div className="absolute top-4 left-4 flex gap-1.5">
@@ -85,7 +84,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                     i === selectedImage ? "border-dusty-rose" : "border-transparent"
                   }`}
                 >
-                  <Image src={img} alt="" fill className="object-cover" unoptimized={img.endsWith(".svg")} />
+                  <Image src={img} alt="" fill className="object-cover" />
                 </button>
               ))}
             </div>

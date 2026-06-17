@@ -9,6 +9,7 @@ import { useCartStore } from "@/lib/store/cartStore";
 
 interface Props {
   product: Product;
+  priority?: boolean;
 }
 
 const tagStyle: Record<string, string> = {
@@ -17,7 +18,7 @@ const tagStyle: Record<string, string> = {
   "New Arrival": "bg-white text-charcoal border border-sand",
 };
 
-export default function ProductCard({ product }: Props) {
+export default function ProductCard({ product, priority = false }: Props) {
   const { toggle, has } = useWishlistStore();
   const { addItem } = useCartStore();
   const wished = has(product.id);
@@ -38,9 +39,9 @@ export default function ProductCard({ product }: Props) {
             src={product.images[0]}
             alt={product.name}
             fill
+            priority={priority}
             className="object-contain transition-transform duration-700 ease-out scale-[1.12] group-hover:scale-[1.16]"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            unoptimized={product.images[0].endsWith(".svg")}
           />
 
           {/* Soft vignette on hover */}

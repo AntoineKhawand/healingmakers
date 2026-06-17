@@ -7,14 +7,14 @@ const collections = [
     title: "T-Shirts",
     subtitle: "Everyday essentials",
     href: "/shop/t-shirts",
-    image: "/products/joie-de-vivre-tshirt.svg",
+    image: "/products/joie-de-vivre-tshirt.webp",
     bg: "bg-light-sand",
   },
   {
     title: "Hoodies",
     subtitle: "Wrap yourself in healing",
     href: "/shop/hoodies",
-    image: "/products/ski-hoodie.svg",
+    image: "/products/ski-hoodie.webp",
     bg: "bg-muted-rose/40",
   },
   {
@@ -28,7 +28,7 @@ const collections = [
     title: "Customize",
     subtitle: "Make it uniquely yours",
     href: "/customize",
-    image: "/products/perhaps-you-were-created-for-such-a-time-as-this-hoodie.svg",
+    image: "/products/perhaps-you-were-created-for-such-a-time-as-this-hoodie.webp",
     bg: "bg-cream",
   },
 ];
@@ -59,7 +59,6 @@ export default function FeaturedCollections() {
               fill
               className="object-contain transition-transform duration-500 scale-[1.12] group-hover:scale-[1.18]"
               sizes="(max-width: 640px) 50vw, 25vw"
-              unoptimized={col.image.endsWith(".svg")}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-soft-black/70 via-transparent to-transparent" />
             <div className="absolute bottom-4 left-4 right-4">
