@@ -21,7 +21,6 @@ const shopLinks = [
   { label: "Kids", href: "/shop/kids" },
   { label: "Customize", href: "/customize" },
   { label: "Bundle & Save", href: "/bundle" },
-  { label: "Gift Cards", href: "/gift-cards" },
 ];
 
 const helpLinks = [
