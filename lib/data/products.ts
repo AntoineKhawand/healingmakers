@@ -661,7 +661,7 @@ const caps: Product[] = [
     name: "Maristes Cap",
     slug: "maristes-cap",
     description: "A clean, structured cap with the spirit of community. Simple, meaningful, timeless.",
-    price: 20, compareAtPrice: 30,
+    price: 15, compareAtPrice: 30,
     images: ["/products/maristes-cap.webp"],
     category: "caps", sizes: ["One Size"], colors: BW_COLORS,
     stock: 40, isCustomizable: true, tags: ["New Arrival"], rating: 4.7, reviewCount: 18,
