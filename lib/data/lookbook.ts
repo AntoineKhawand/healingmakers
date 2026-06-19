@@ -43,7 +43,7 @@ export const lookbookEntries: LookbookEntry[] = [
     id: "look-4",
     title: "The Kids Edit",
     subtitle: "Because healing starts young.",
-    image: "https://images.unsplash.com/photo-1613155266464-b76318091db3?w=900&q=80",
+    image: "https://images.unsplash.com/photo-1754639488181-7eae9f6c06e0?w=900&q=80",
     productSlugs: ["just-a-girl-kids-hoodie", "official-cookies-tester-kids-hoodie", "be-a-little-naughty-kids-hoodie"],
     productNames: ["Just a Girl", "Official Cookies Tester", "Sometimes You Have to Be a Little Bit Naughty"],
     season: "Summer 2026",
