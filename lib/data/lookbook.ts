@@ -55,6 +55,7 @@ export const lookbookEntries: LookbookEntry[] = [
     title: "Layer Season",
     subtitle: "Sweater weather, all year.",
     image: "https://images.unsplash.com/photo-1616006897093-5e4635c0de35?w=900&q=80",
+    zoom: true,
     productSlugs: ["wellness-sweater", "stronger-than-the-storm-sweater", "remember-your-why-sweater"],
     productNames: ["Wellness", "Stronger than the Storm", "Remember Your Why"],
     season: "Summer 2026",
