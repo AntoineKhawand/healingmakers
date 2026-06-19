@@ -40,7 +40,7 @@ export default function LookbookPageClient() {
                 src={look.image}
                 alt={look.title}
                 fill
-                className="object-contain transition-transform duration-700 group-hover:scale-105"
+                className={`${look.zoom ? "object-cover" : "object-contain"} transition-transform duration-700 group-hover:scale-105`}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
               {/* Overlay */}
@@ -82,7 +82,7 @@ export default function LookbookPageClient() {
                   src={active.image}
                   alt={active.title}
                   fill
-                  className="object-contain"
+                  className={active.zoom ? "object-cover" : "object-contain"}
                 />
                 <button
                   onClick={() => setActiveLook(null)}
