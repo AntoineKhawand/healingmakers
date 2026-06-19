@@ -110,7 +110,7 @@ export default function LookbookPageClient() {
                               src={product.images[0]}
                               alt={product.name}
                               fill
-                              className="object-cover"
+                              className="object-contain"
                               sizes="56px"
                             />
                           </div>
