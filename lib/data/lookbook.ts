@@ -13,7 +13,7 @@ export const lookbookEntries: LookbookEntry[] = [
     id: "look-1",
     title: "The Everyday Essential",
     subtitle: "Clean. Minimal. Lebanese.",
-    image: "/products/joie-de-vivre-tshirt.webp",
+    image: "https://images.unsplash.com/photo-1624373607006-348f61ea2d76?w=900&q=80",
     productSlugs: ["be-kind-tshirt", "joie-de-vivre-tshirt", "less-fear-more-love-tshirt"],
     productNames: ["Be Kind", "Joie de Vivre", "Less Fear, More Love"],
     season: "Summer 2026",
