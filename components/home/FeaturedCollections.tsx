@@ -9,6 +9,7 @@ const collections = [
     href: "/shop/t-shirts",
     image: "/products/joie-de-vivre-tshirt.webp",
     bg: "bg-light-sand",
+    imageClass: "object-contain scale-[1.12] group-hover:scale-[1.18]",
   },
   {
     title: "Hoodies",
@@ -16,6 +17,7 @@ const collections = [
     href: "/shop/hoodies",
     image: "/products/ski-hoodie.webp",
     bg: "bg-muted-rose/40",
+    imageClass: "object-cover scale-[1.25] group-hover:scale-[1.32]",
   },
   {
     title: "Matching Sets",
@@ -23,6 +25,7 @@ const collections = [
     href: "/shop/matching-sets",
     image: "/matching-sets.jpg",
     bg: "bg-sand",
+    imageClass: "object-contain scale-[1.12] group-hover:scale-[1.18]",
   },
   {
     title: "Customize",
@@ -30,6 +33,7 @@ const collections = [
     href: "/customize",
     image: "/products/perhaps-you-were-created-for-such-a-time-as-this-hoodie.webp",
     bg: "bg-cream",
+    imageClass: "object-cover scale-[1.25] group-hover:scale-[1.32]",
   },
 ];
 
@@ -57,7 +61,7 @@ export default function FeaturedCollections() {
               src={col.image}
               alt={col.title}
               fill
-              className="object-contain transition-transform duration-500 scale-[1.12] group-hover:scale-[1.18]"
+              className={`transition-transform duration-500 ${col.imageClass}`}
               sizes="(max-width: 640px) 50vw, 25vw"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-soft-black/70 via-transparent to-transparent" />
